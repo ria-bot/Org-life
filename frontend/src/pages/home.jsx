@@ -1,18 +1,50 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { 
+  Chart as ChartJS, 
+  CategoryScale, 
+  LinearScale, 
+  BarElement, 
+  Title, 
+  Tooltip, 
+  Legend,
+  ArcElement,
+  PointElement,
+  LineElement
+} from 'chart.js';
+import { Bar, Pie, Line } from 'react-chartjs-2';
 import api from "../services/api";
 import "./Home.css";
+
+// Register ChartJS components
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement,
+  PointElement,
+  LineElement
+);
 
 export default function Home() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
-  const [weeklyBudget, setWeeklyBudget] = useState(10000); // Default KES
+  const [weeklyBudget, setWeeklyBudget] = useState(10000);
   const [weeklySpending, setWeeklySpending] = useState(0);
+  const [dailySpending, setDailySpending] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAddCategory, setShowAddCategory] = useState(false);
   const [newCategory, setNewCategory] = useState("");
   const [newCategoryBudget, setNewCategoryBudget] = useState("");
+  
+  // Graph states
+  const [chartType, setChartType] = useState('bar');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [showGraph, setShowGraph] = useState(true);
 
   useEffect(() => {
     fetchHomeData();
@@ -23,12 +55,15 @@ export default function Home() {
       const userData = await api.getCurrentUser();
       setUser(userData);
 
-      // Get this week's expenses
+      // Get expenses
       const expenses = await api.getExpenses();
-      const thisWeek = getThisWeekExpenses(expenses);
-      setWeeklySpending(thisWeek);
+      
+      // Calculate weekly spending and daily breakdown
+      const { weeklyTotal, dailyData } = getWeeklyData(expenses);
+      setWeeklySpending(weeklyTotal);
+      setDailySpending(dailyData);
 
-      // Get categories (from expenses)
+      // Get categories
       const categoryList = getCategoryList(expenses);
       setCategories(categoryList);
 
@@ -48,18 +83,37 @@ export default function Home() {
     }
   }
 
-  // Get expenses from this week
-  function getThisWeekExpenses(expenses) {
+  // Get weekly data (Monday to Sunday)
+  function getWeeklyData(expenses) {
     const now = new Date();
     const startOfWeek = new Date(now);
-    startOfWeek.setDate(now.getDate() - now.getDay()); // Start of week (Sunday)
+    startOfWeek.setDate(now.getDate() - now.getDay() + 1); // Monday
+    
+    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    const dailyTotal = {};
+    
+    // Initialize days with 0
+    days.forEach(day => dailyTotal[day] = 0);
 
-    return expenses
-      .filter(e => {
-        const expenseDate = new Date(e.expense_date);
-        return expenseDate >= startOfWeek && expenseDate <= now;
-      })
-      .reduce((sum, e) => sum + parseFloat(e.amount), 0);
+    let weeklyTotal = 0;
+
+    expenses.forEach(e => {
+      const expenseDate = new Date(e.expense_date);
+      if (expenseDate >= startOfWeek && expenseDate <= now) {
+        const dayIndex = expenseDate.getDay();
+        const dayName = days[dayIndex === 0 ? 6 : dayIndex - 1];
+        dailyTotal[dayName] += parseFloat(e.amount);
+        weeklyTotal += parseFloat(e.amount);
+      }
+    });
+
+    // Convert to array format
+    const dailyData = days.map(day => ({
+      day,
+      amount: dailyTotal[day]
+    }));
+
+    return { weeklyTotal, dailyData };
   }
 
   // Get unique categories from expenses
@@ -80,6 +134,126 @@ export default function Home() {
 
     return Object.values(categoryMap).sort((a, b) => b.total - a.total);
   }
+
+  // Chart data
+  const getChartData = () => {
+    let filteredData = dailySpending;
+    
+    if (selectedCategory !== 'all') {
+      // Filter by category (would need category filtering in API)
+      // For now, we just show all data
+    }
+
+    const labels = filteredData.map(d => d.day);
+    const values = filteredData.map(d => d.amount);
+
+    const colors = ['#1a2a3a', '#2a4a6a', '#4a6a8a', '#6a8aaa', '#8a9aaa', '#c4a882', '#d4c8bc'];
+
+    return {
+      labels,
+      datasets: [
+        {
+          label: 'Daily Spending',
+          data: values,
+          backgroundColor: colors,
+          borderColor: '#1a2a3a',
+          borderWidth: 2,
+          tension: 0.3,
+          fill: true,
+          pointBackgroundColor: '#1a2a3a',
+        }
+      ]
+    };
+  };
+
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: false
+      },
+      tooltip: {
+        backgroundColor: '#1a2a3a',
+        titleColor: '#f5f0eb',
+        bodyColor: '#f5f0eb',
+        borderColor: '#c4a882',
+        borderWidth: 2,
+        padding: 12,
+        cornerRadius: 0,
+        callbacks: {
+          label: function(context) {
+            return `${user?.currency || 'KES'} ${context.raw.toFixed(2)}`;
+          }
+        }
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        grid: {
+          color: '#e8e0d8',
+          drawBorder: false
+        },
+        ticks: {
+          font: {
+            family: 'Courier New',
+            size: 11
+          },
+          color: '#4a5a6a',
+          callback: function(value) {
+            return `${user?.currency || 'KES'} ${value}`;
+          }
+        }
+      },
+      x: {
+        grid: {
+          display: false
+        },
+        ticks: {
+          font: {
+            family: 'Courier New',
+            size: 12
+          },
+          color: '#4a5a6a'
+        }
+      }
+    }
+  };
+
+  const pieOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: {
+          font: {
+            family: 'Courier New',
+            size: 12
+          },
+          color: '#1a2a3a',
+          padding: 16
+        }
+      },
+      tooltip: {
+        backgroundColor: '#1a2a3a',
+        titleColor: '#f5f0eb',
+        bodyColor: '#f5f0eb',
+        borderColor: '#c4a882',
+        borderWidth: 2,
+        padding: 12,
+        cornerRadius: 0,
+        callbacks: {
+          label: function(context) {
+            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+            const percentage = ((context.raw / total) * 100).toFixed(1);
+            return `${user?.currency || 'KES'} ${context.raw.toFixed(2)} (${percentage}%)`;
+          }
+        }
+      }
+    }
+  };
 
   // Calculate spending percentage
   const spendingPercentage = Math.min((weeklySpending / weeklyBudget) * 100, 100);
@@ -105,12 +279,10 @@ export default function Home() {
       budget: parseFloat(newCategoryBudget)
     };
 
-    // Save to localStorage for now (backend integration later)
     const savedCategories = JSON.parse(localStorage.getItem('orglife_categories') || '[]');
     savedCategories.push(categoryData);
     localStorage.setItem('orglife_categories', JSON.stringify(savedCategories));
 
-    // Update state
     setCategories([...categories, { 
       name: categoryData.name, 
       total: 0, 
@@ -190,6 +362,106 @@ export default function Home() {
             )}
           </div>
         </div>
+      </section>
+
+      {/* ===== GRAPH SECTION ===== */}
+      <section className="graph-section">
+        <div className="graph-header">
+          <div className="graph-title-group">
+            <h2 className="graph-title">📊 Spending Overview</h2>
+            <button 
+              className="toggle-graph-btn"
+              onClick={() => setShowGraph(!showGraph)}
+            >
+              {showGraph ? 'Hide Graph' : 'Show Graph'}
+            </button>
+          </div>
+          
+          <div className="graph-controls">
+            <div className="chart-type-selector">
+              <button 
+                className={`chart-btn ${chartType === 'bar' ? 'active' : ''}`}
+                onClick={() => setChartType('bar')}
+              >
+                📊 Bar
+              </button>
+              <button 
+                className={`chart-btn ${chartType === 'line' ? 'active' : ''}`}
+                onClick={() => setChartType('line')}
+              >
+                📈 Line
+              </button>
+              <button 
+                className={`chart-btn ${chartType === 'pie' ? 'active' : ''}`}
+                onClick={() => setChartType('pie')}
+              >
+                🥧 Pie
+              </button>
+            </div>
+
+            <div className="category-filter">
+              <label>Filter:</label>
+              <select 
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+              >
+                <option value="all">All Categories</option>
+                {categories.map((cat, index) => (
+                  <option key={index} value={cat.name}>
+                    {cat.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </div>
+
+        {showGraph && (
+          <div className="graph-container">
+            {dailySpending.every(d => d.amount === 0) ? (
+              <div className="empty-graph">
+                <p>📭 No spending data this week</p>
+                <p className="empty-hint">Start tracking your expenses to see your spending patterns!</p>
+              </div>
+            ) : (
+              <>
+                <div className="chart-wrapper">
+                  {chartType === 'bar' && (
+                    <Bar data={getChartData()} options={chartOptions} />
+                  )}
+                  {chartType === 'line' && (
+                    <Line data={getChartData()} options={chartOptions} />
+                  )}
+                  {chartType === 'pie' && (
+                    <Pie data={getChartData()} options={pieOptions} />
+                  )}
+                </div>
+
+                {/* Chart Legend */}
+                <div className="chart-stats">
+                  <div className="stat-item">
+                    <span className="stat-label">Total Spent:</span>
+                    <span className="stat-value">
+                      {user?.currency || 'KES'} {weeklySpending.toFixed(2)}
+                    </span>
+                  </div>
+                  <div className="stat-item">
+                    <span className="stat-label">Daily Average:</span>
+                    <span className="stat-value">
+                      {user?.currency || 'KES'} {(weeklySpending / 7).toFixed(2)}
+                    </span>
+                  </div>
+                  <div className="stat-item">
+                    <span className="stat-label">Budget Status:</span>
+                    <span className={`stat-value ${isOverBudget ? 'over' : 'under'}`}>
+                      {isOverBudget ? '⚠️ Over' : '✅ On Track'}
+                    </span>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        )}
       </section>
 
       {/* ===== BOTTOM SECTION: Categories ===== */}

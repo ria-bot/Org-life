@@ -17,6 +17,19 @@
   color: #1a2a3a;
 }
 
+.loader {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #d4c8bc;
+  border-top-color: #1a2a3a;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
 /* ===== WEEKLY SECTION ===== */
 .weekly-section {
   background: #fcf8f4;
@@ -176,6 +189,186 @@
 
 .over-text {
   color: #c44a3a;
+}
+
+/* ===== GRAPH SECTION ===== */
+.graph-section {
+  background: #fcf8f4;
+  border: 3px solid #1a2a3a;
+  padding: 28px 32px;
+  margin-bottom: 32px;
+  box-shadow: 6px 6px 0 rgba(26, 42, 58, 0.1);
+}
+
+.graph-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.graph-title-group {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.graph-title {
+  font-family: 'Times New Roman', serif;
+  font-size: 24px;
+  color: #1a2a3a;
+}
+
+.toggle-graph-btn {
+  padding: 4px 14px;
+  background: none;
+  border: 2px solid #d4c8bc;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  color: #4a5a6a;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.toggle-graph-btn:hover {
+  border-color: #1a2a3a;
+  color: #1a2a3a;
+}
+
+.graph-controls {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.chart-type-selector {
+  display: flex;
+  gap: 4px;
+  border: 2px solid #d4c8bc;
+  padding: 4px;
+  background: #f5f0eb;
+}
+
+.chart-btn {
+  padding: 6px 14px;
+  background: transparent;
+  border: none;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  color: #4a5a6a;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.chart-btn:hover {
+  background: #e8e0d8;
+}
+
+.chart-btn.active {
+  background: #1a2a3a;
+  color: #f5f0eb;
+}
+
+.category-filter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.category-filter label {
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  color: #4a5a6a;
+  letter-spacing: 1px;
+}
+
+.category-filter select {
+  padding: 6px 12px;
+  border: 2px solid #d4c8bc;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  background: #fcf8f4;
+  color: #1a2a3a;
+  cursor: pointer;
+}
+
+.category-filter select:focus {
+  outline: none;
+  border-color: #1a2a3a;
+}
+
+/* Graph Container */
+.graph-container {
+  margin-top: 8px;
+}
+
+.chart-wrapper {
+  height: 320px;
+  position: relative;
+}
+
+.empty-graph {
+  height: 320px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: 2px dashed #d4c8bc;
+  background: #f5f0eb;
+}
+
+.empty-graph p {
+  font-family: 'Courier New', monospace;
+  font-size: 18px;
+  color: #4a5a6a;
+  margin: 4px 0;
+}
+
+.empty-graph .empty-hint {
+  font-size: 13px !important;
+  color: #8a9aaa !important;
+}
+
+/* Chart Stats */
+.chart-stats {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 2px solid #e8e0d8;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.stat-item .stat-label {
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  color: #4a5a6a;
+  letter-spacing: 1px;
+}
+
+.stat-item .stat-value {
+  font-family: 'Courier New', monospace;
+  font-size: 16px;
+  font-weight: bold;
+  color: #1a2a3a;
+}
+
+.stat-item .stat-value.over {
+  color: #c44a3a;
+}
+
+.stat-item .stat-value.under {
+  color: #2a6a4a;
 }
 
 /* ===== CATEGORIES SECTION ===== */
@@ -386,6 +579,49 @@
     margin-left: 0;
     width: 100%;
     text-align: center;
+  }
+
+  .graph-header {
+    flex-direction: column;
+  }
+
+  .graph-title-group {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .graph-controls {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .chart-type-selector {
+    justify-content: center;
+  }
+
+  .category-filter {
+    justify-content: center;
+  }
+
+  .category-filter select {
+    flex: 1;
+  }
+
+  .chart-wrapper {
+    height: 250px;
+  }
+
+  .chart-stats {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .stat-item {
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px dotted #e8e0d8;
   }
 
   .categories-grid {

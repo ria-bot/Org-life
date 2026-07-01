@@ -1,13 +1,12 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import api from "../services/api";
-import Home from "../pages/Home";
+import Home from "./Home";
 import DashboardTour from "../components/DashboardTour";
 import "./Dashboard.css";
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const location = useLocation();
   const [currentPage, setCurrentPage] = useState("home");
   const [user, setUser] = useState(null);
   const [expenses, setExpenses] = useState([]);
@@ -50,6 +49,19 @@ export default function Dashboard() {
     setTourComplete(true);
   };
 
+  function renderPage() {
+    switch(currentPage) {
+      case 'home':
+        return <Home />;
+      case 'expenses':
+        return <div className="page-placeholder">Expenses Page (Coming Soon)</div>;
+      case 'income':
+        return <div className="page-placeholder">Income Page (Coming Soon)</div>;
+      default:
+        return <Home />;
+    }
+  }
+
   if (loading) {
     return (
       <div className="dashboard-loading">
@@ -59,25 +71,12 @@ export default function Dashboard() {
     );
   }
 
-   function renderPage() {
-    switch(currentPage) {
-      case 'home':
-        return <Home />;
-      case 'expenses':
-        return <div className="page-placeholder">Expenses Page</div>;
-      case 'income':
-        return <div className="page-placeholder">Income Page</div>;
-      default:
-        return <Home />;
-    }
-  }
-
   return (
     <div className="dashboard">
       {/* Tour */}
       <DashboardTour onComplete={handleTourComplete} />
 
-       {/* Sidebar */}
+      {/* Sidebar */}
       <aside className="sidebar">
         <div className="sidebar-brand">
           <span className="brand-icon">⚓</span>
@@ -124,94 +123,107 @@ export default function Dashboard() {
         </div>
       </aside>
 
-      {/* Main */}
+      {/* Main Content */}
       <main className="main-content">
-        <header className="dashboard-header">
-          <div>
-            <h1 className="dashboard-title" id="dashboard-title">
-              Good day, {user?.full_name?.split(' ')[0] || 'User'}
-            </h1>
-            <p className="dashboard-subtitle">
-              Here's your financial ledger
-            </p>
-          </div>
-          <button className="add-btn">+ Add Entry</button>
-        </header>
-
-        {/* Stats */}
-        <div className="stats-grid" id="stats-grid">
-          <div className="stat-card balance" id="stat-balance">
-            <div className="stat-header">
-              <span className="stat-icon">💰</span>
-              <span className="stat-label">Balance</span>
+        {/* Only show header on non-home pages */}
+        {currentPage !== 'home' && (
+          <header className="dashboard-header">
+            <div>
+              <h1 className="dashboard-title" id="dashboard-title">
+                {currentPage === 'expenses' ? '📉 Expenses' : '💰 Income'}
+              </h1>
+              <p className="dashboard-subtitle">
+                Manage your {currentPage}
+              </p>
             </div>
-            <p className="stat-value">{user?.currency || 'KES'} {balance.toLocaleString()}</p>
-          </div>
+            <button className="add-btn">
+              + Add {currentPage === 'expenses' ? 'Expense' : 'Income'}
+            </button>
+          </header>
+        )}
 
-          <div className="stat-card income">
-            <div className="stat-header">
-              <span className="stat-icon">📈</span>
-              <span className="stat-label">Income</span>
-            </div>
-            <p className="stat-value income-text">{user?.currency || 'KES'} {totalIncome.toLocaleString()}</p>
-          </div>
-
-          <div className="stat-card expense">
-            <div className="stat-header">
-              <span className="stat-icon">📉</span>
-              <span className="stat-label">Expenses</span>
-            </div>
-            <p className="stat-value expense-text">{user?.currency || 'KES'} {totalExpenses.toLocaleString()}</p>
-          </div>
-        </div>
-
-        {/* Recent Expenses */}
-        <section className="recent-section" id="recent-section">
-          <div className="section-header">
-            <h2>Recent Expenses</h2>
-          </div>
-          <div className="ledger-list">
-            {expenses.length === 0 ? (
-              <p className="empty-state">No expenses recorded yet.</p>
-            ) : (
-              expenses.map((expense) => (
-                <div key={expense.id} className="ledger-item">
-                  <div>
-                    <p className="ledger-category">{expense.category}</p>
-                    <p className="ledger-date">{expense.expense_date}</p>
-                  </div>
-                  <p className="ledger-amount expense-text">
-                    -{user?.currency || 'KES'} {parseFloat(expense.amount).toLocaleString()}
-                  </p>
+        {/* Stats only on home page */}
+        {currentPage === 'home' && (
+          <>
+            {/* Stats */}
+            <div className="stats-grid" id="stats-grid">
+              <div className="stat-card balance" id="stat-balance">
+                <div className="stat-header">
+                  <span className="stat-icon">💰</span>
+                  <span className="stat-label">Balance</span>
                 </div>
-              ))
-            )}
-          </div>
-        </section>
+                <p className="stat-value">{user?.currency || 'KES'} {balance.toLocaleString()}</p>
+              </div>
 
-        {/* Recent Income */}
-        <section className="recent-section">
-          <div className="section-header">
-            <h2>Recent Income</h2>
-          </div>
-          <div className="ledger-list">
-            {income.length === 0 ? (
-              <p className="empty-state">No income recorded yet.</p>
-            ) : (
-              income.map((item) => (
-                <div key={item.id} className="ledger-item">
-                  <div>
-                    <p className="ledger-category">{item.source}</p>
-                    <p className="ledger-date">{item.income_date}</p>
-                  </div>
-                  <p className="ledger-amount income-text">
-                    +{user?.currency || 'KES'} {parseFloat(item.amount).toLocaleString()}
-                  </p>
+              <div className="stat-card income">
+                <div className="stat-header">
+                  <span className="stat-icon">📈</span>
+                  <span className="stat-label">Income</span>
                 </div>
-              ))
-            )}
-          </div>
-        </section>
+                <p className="stat-value income-text">{user?.currency || 'KES'} {totalIncome.toLocaleString()}</p>
+              </div>
+
+              <div className="stat-card expense">
+                <div className="stat-header">
+                  <span className="stat-icon">📉</span>
+                  <span className="stat-label">Expenses</span>
+                </div>
+                <p className="stat-value expense-text">{user?.currency || 'KES'} {totalExpenses.toLocaleString()}</p>
+              </div>
+            </div>
+
+            {/* Recent Expenses */}
+            <section className="recent-section" id="recent-section">
+              <div className="section-header">
+                <h2>Recent Expenses</h2>
+              </div>
+              <div className="ledger-list">
+                {expenses.length === 0 ? (
+                  <p className="empty-state">No expenses recorded yet.</p>
+                ) : (
+                  expenses.map((expense) => (
+                    <div key={expense.id} className="ledger-item">
+                      <div>
+                        <p className="ledger-category">{expense.category}</p>
+                        <p className="ledger-date">{expense.expense_date}</p>
+                      </div>
+                      <p className="ledger-amount expense-text">
+                        -{user?.currency || 'KES'} {parseFloat(expense.amount).toLocaleString()}
+                      </p>
+                    </div>
+                  ))
+                )}
+              </div>
+            </section>
+
+            {/* Recent Income */}
+            <section className="recent-section">
+              <div className="section-header">
+                <h2>Recent Income</h2>
+              </div>
+              <div className="ledger-list">
+                {income.length === 0 ? (
+                  <p className="empty-state">No income recorded yet.</p>
+                ) : (
+                  income.map((item) => (
+                    <div key={item.id} className="ledger-item">
+                      <div>
+                        <p className="ledger-category">{item.source}</p>
+                        <p className="ledger-date">{item.income_date}</p>
+                      </div>
+                      <p className="ledger-amount income-text">
+                        +{user?.currency || 'KES'} {parseFloat(item.amount).toLocaleString()}
+                      </p>
+                    </div>
+                  ))
+                )}
+              </div>
+            </section>
+          </>
+        )}
+
+        {/* Render the page content (Home, Expenses, Income) */}
+        {renderPage()}
       </main>
     </div>
   );
