@@ -1,0 +1,196 @@
+/* ===== TOUR OVERLAY ===== */
+.tour-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 999;
+  pointer-events: none;
+}
+
+.tour-overlay-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(26, 42, 58, 0.6);
+  pointer-events: all;
+}
+
+/* ===== TOOLTIP ===== */
+.tour-tooltip {
+  position: fixed;
+  z-index: 1000;
+  background: #fcf8f4;
+  border: 3px solid #1a2a3a;
+  box-shadow: 6px 6px 0 rgba(26, 42, 58, 0.15);
+  padding: 24px 28px;
+  max-width: 400px;
+  min-width: 300px;
+  pointer-events: all;
+  font-family: 'Courier New', 'Times New Roman', serif;
+}
+
+/* Center position (for last step) */
+.tour-center {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Bottom position */
+.tour-bottom {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Top position */
+.tour-top {
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Right position */
+.tour-right {
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+}
+
+/* Progress dots */
+.tour-progress {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.tour-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #d4c8bc;
+  border: 1px solid #1a2a3a;
+  transition: all 0.3s;
+}
+
+.tour-dot.active {
+  background: #1a2a3a;
+  transform: scale(1.2);
+}
+
+.tour-dot.completed {
+  background: #2a4a6a;
+  border-color: #2a4a6a;
+}
+
+/* Content */
+.tour-content h3 {
+  font-family: 'Times New Roman', serif;
+  font-size: 20px;
+  color: #1a2a3a;
+  margin-bottom: 8px;
+}
+
+.tour-content p {
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  color: #4a5a6a;
+  line-height: 1.6;
+}
+
+/* Actions */
+.tour-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 2px solid #e8e0d8;
+}
+
+.tour-skip {
+  background: none;
+  border: none;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  color: #4a5a6a;
+  cursor: pointer;
+  padding: 6px 12px;
+  transition: color 0.3s;
+}
+
+.tour-skip:hover {
+  color: #8a2a1a;
+}
+
+.tour-next {
+  background: #1a2a3a;
+  color: #f5f0eb;
+  border: 2px solid #1a2a3a;
+  padding: 8px 20px;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.tour-next:hover {
+  background: #2a4a6a;
+  border-color: #2a4a6a;
+}
+
+/* ===== HIGHLIGHT RING ===== */
+.tour-highlight {
+  position: relative;
+  z-index: 1001;
+}
+
+.tour-highlight::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  right: -8px;
+  bottom: -8px;
+  border: 3px solid #fbbf24;
+  border-radius: 4px;
+  animation: pulse 1.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.02);
+  }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .tour-tooltip {
+    min-width: 280px;
+    max-width: 90%;
+    padding: 20px;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    right: auto !important;
+  }
+
+  .tour-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .tour-next {
+    width: 100%;
+  }
+}

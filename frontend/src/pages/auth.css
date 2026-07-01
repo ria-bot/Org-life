@@ -1,0 +1,236 @@
+/* ===== VINTAGE AUTH STYLES ===== */
+.auth-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  background: #f5f0eb;
+  font-family: 'Courier New', 'Times New Roman', serif;
+}
+
+.auth-card {
+  width: 380px;
+  max-width: 100%;
+  padding: 35px 30px 30px;
+  background: #fcf8f4;
+  border: 3px solid #1a2a3a;
+  box-shadow: 8px 8px 0 rgba(26, 42, 58, 0.12);
+  position: relative;
+}
+
+.auth-title {
+  font-family: 'Times New Roman', serif;
+  font-size: 28px;
+  color: #1a2a3a;
+  text-align: center;
+  margin-bottom: 4px;
+  letter-spacing: 2px;
+}
+
+.auth-subtitle {
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  color: #4a5a6a;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.auth-input {
+  width: 100%;
+  padding: 10px 12px;
+  margin: 6px 0;
+  border: 2px solid #d4c8bc;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  background: #fcf8f4;
+  color: #1a2a3a;
+  transition: border-color 0.3s;
+}
+
+.auth-input:focus {
+  outline: none;
+  border-color: #1a2a3a;
+}
+
+.auth-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Back Button */
+.back-button {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: none;
+  border: 1px solid #d4c8bc;
+  padding: 4px 12px;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  color: #4a5a6a;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.back-button:hover {
+  border-color: #1a2a3a;
+  color: #1a2a3a;
+}
+
+/* Currency Select */
+.currency-select {
+  margin: 8px 0 12px;
+  text-align: left;
+}
+
+.currency-select label {
+  display: block;
+  font-size: 12px;
+  font-family: 'Courier New', monospace;
+  color: #4a5a6a;
+  margin-bottom: 3px;
+  letter-spacing: 1px;
+}
+
+.currency-select select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 2px solid #d4c8bc;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  background: #fcf8f4;
+  color: #1a2a3a;
+  cursor: pointer;
+}
+
+.currency-select select:focus {
+  outline: none;
+  border-color: #1a2a3a;
+}
+
+/* Terms */
+.terms-container {
+  margin: 10px 0 4px;
+  text-align: left;
+}
+
+.terms-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  color: #4a5a6a;
+  cursor: pointer;
+}
+
+.terms-label input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #1a2a3a;
+  cursor: pointer;
+}
+
+/* Buttons */
+.auth-buttons {
+  margin-top: 16px;
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 12px;
+  background: #1a2a3a;
+  color: #f5f0eb;
+  border: 2px solid #1a2a3a;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s;
+  letter-spacing: 1px;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #2a4a6a;
+  border-color: #2a4a6a;
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Toggle */
+.auth-toggle {
+  margin-top: 16px;
+  text-align: center;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  color: #4a5a6a;
+  cursor: pointer;
+  border-bottom: 1px dashed #d4c8bc;
+  padding-bottom: 4px;
+  transition: color 0.3s;
+}
+
+.auth-toggle:hover {
+  color: #1a2a3a;
+}
+
+/* Error Messages */
+.auth-error {
+  background: #fcf0ec;
+  border: 2px solid #c44a3a;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  color: #8a2a1a;
+}
+
+.validation-errors {
+  background: #fcf0ec;
+  border: 2px solid #c44a3a;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+}
+
+.validation-title {
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  font-weight: bold;
+  color: #8a2a1a;
+  margin-bottom: 4px;
+}
+
+.validation-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.validation-list li {
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  color: #8a2a1a;
+  padding: 2px 0;
+  padding-left: 16px;
+  position: relative;
+}
+
+.validation-list li::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .auth-card {
+    padding: 28px 18px 24px;
+  }
+
+  .auth-title {
+    font-size: 24px;
+  }
+}
