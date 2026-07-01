@@ -1,0 +1,411 @@
+/* ===== HOME PAGE ===== */
+.home {
+  padding: 32px 40px;
+  max-width: 1100px;
+  margin: 0 auto;
+  font-family: 'Courier New', 'Times New Roman', serif;
+}
+
+/* Loading */
+.home-loading {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: #f5f0eb;
+  color: #1a2a3a;
+}
+
+/* ===== WEEKLY SECTION ===== */
+.weekly-section {
+  background: #fcf8f4;
+  border: 3px solid #1a2a3a;
+  padding: 28px 32px;
+  margin-bottom: 32px;
+  box-shadow: 6px 6px 0 rgba(26, 42, 58, 0.1);
+}
+
+.weekly-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.weekly-title {
+  font-family: 'Times New Roman', serif;
+  font-size: 26px;
+  color: #1a2a3a;
+  margin-bottom: 4px;
+}
+
+.weekly-subtitle {
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  color: #4a5a6a;
+}
+
+.budget-input-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #f5f0eb;
+  padding: 8px 14px;
+  border: 2px solid #d4c8bc;
+}
+
+.budget-input-group label {
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  color: #4a5a6a;
+  letter-spacing: 1px;
+}
+
+.budget-input {
+  width: 120px;
+  padding: 6px 10px;
+  border: 1px solid #d4c8bc;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  background: #fcf8f4;
+  color: #1a2a3a;
+  text-align: right;
+}
+
+.budget-input:focus {
+  outline: none;
+  border-color: #1a2a3a;
+}
+
+.budget-currency {
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  color: #4a5a6a;
+}
+
+/* Progress Bar */
+.progress-container {
+  margin-top: 4px;
+}
+
+.progress-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.progress-label {
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  color: #4a5a6a;
+  letter-spacing: 1px;
+}
+
+.progress-amount {
+  font-family: 'Courier New', monospace;
+  font-size: 18px;
+  font-weight: bold;
+  color: #1a2a3a;
+}
+
+.progress-divider {
+  color: #d4c8bc;
+  font-size: 18px;
+}
+
+.progress-total {
+  font-family: 'Courier New', monospace;
+  font-size: 16px;
+  color: #4a5a6a;
+}
+
+.progress-status {
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  font-weight: bold;
+  padding: 4px 12px;
+  border: 2px solid;
+  margin-left: auto;
+}
+
+.progress-status.under {
+  color: #2a6a4a;
+  border-color: #2a6a4a;
+}
+
+.progress-status.over {
+  color: #c44a3a;
+  border-color: #c44a3a;
+}
+
+.progress-bar-container {
+  width: 100%;
+  height: 20px;
+  background: #e8e0d8;
+  border: 2px solid #1a2a3a;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  transition: width 0.6s ease;
+}
+
+.progress-bar.under {
+  background: #2a6a4a;
+}
+
+.progress-bar.over {
+  background: #c44a3a;
+}
+
+.progress-remaining {
+  margin-top: 10px;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+}
+
+.under-text {
+  color: #2a6a4a;
+}
+
+.over-text {
+  color: #c44a3a;
+}
+
+/* ===== CATEGORIES SECTION ===== */
+.categories-section {
+  background: #fcf8f4;
+  border: 3px solid #1a2a3a;
+  padding: 28px 32px;
+  box-shadow: 6px 6px 0 rgba(26, 42, 58, 0.1);
+}
+
+.categories-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.categories-title {
+  font-family: 'Times New Roman', serif;
+  font-size: 24px;
+  color: #1a2a3a;
+}
+
+.add-category-btn {
+  padding: 8px 20px;
+  background: #1a2a3a;
+  color: #f5f0eb;
+  border: 2px solid #1a2a3a;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.add-category-btn:hover {
+  background: #2a4a6a;
+  border-color: #2a4a6a;
+}
+
+/* Add Category Form */
+.add-category-form {
+  background: #f5f0eb;
+  border: 2px solid #d4c8bc;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.category-input {
+  flex: 1;
+  min-width: 150px;
+  padding: 8px 12px;
+  border: 2px solid #d4c8bc;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  background: #fcf8f4;
+  color: #1a2a3a;
+}
+
+.category-input:focus {
+  outline: none;
+  border-color: #1a2a3a;
+}
+
+.save-category-btn {
+  padding: 8px 24px;
+  background: #2a6a4a;
+  color: #f5f0eb;
+  border: 2px solid #2a6a4a;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.save-category-btn:hover {
+  background: #1a4a3a;
+  border-color: #1a4a3a;
+}
+
+/* Categories Grid */
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.empty-categories {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 40px 20px;
+  border: 2px dashed #d4c8bc;
+}
+
+.empty-categories p {
+  font-family: 'Courier New', monospace;
+  font-size: 16px;
+  color: #4a5a6a;
+  margin: 4px 0;
+}
+
+.empty-hint {
+  font-size: 13px !important;
+  color: #8a9aaa !important;
+}
+
+/* Category Card */
+.category-card {
+  background: #f5f0eb;
+  border: 2px solid #d4c8bc;
+  padding: 16px 20px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 12px;
+  align-items: center;
+  transition: border-color 0.3s;
+}
+
+.category-card:hover {
+  border-color: #1a2a3a;
+}
+
+.category-icon {
+  font-size: 28px;
+  width: 40px;
+  text-align: center;
+}
+
+.category-info {
+  flex: 1;
+}
+
+.category-name {
+  font-family: 'Times New Roman', serif;
+  font-size: 18px;
+  color: #1a2a3a;
+  margin: 0;
+}
+
+.category-details {
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  color: #4a5a6a;
+  margin: 2px 0 0;
+}
+
+.category-amount {
+  text-align: right;
+}
+
+.category-total {
+  font-family: 'Courier New', monospace;
+  font-size: 16px;
+  font-weight: bold;
+  color: #1a2a3a;
+  display: block;
+}
+
+.category-budget {
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  color: #4a5a6a;
+  display: block;
+}
+
+.category-progress {
+  grid-column: 1 / -1;
+  height: 4px;
+  background: #e8e0d8;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.category-progress-bar {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.6s ease;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .home {
+    padding: 20px;
+  }
+
+  .weekly-header {
+    flex-direction: column;
+  }
+
+  .budget-input-group {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .budget-input {
+    width: 80px;
+  }
+
+  .progress-info {
+    font-size: 13px;
+  }
+
+  .progress-status {
+    margin-left: 0;
+    width: 100%;
+    text-align: center;
+  }
+
+  .categories-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .add-category-form {
+    flex-direction: column;
+  }
+
+  .category-card {
+    grid-template-columns: auto 1fr;
+  }
+
+  .category-amount {
+    grid-column: 2;
+    text-align: left;
+  }
+
+  .category-progress {
+    grid-column: 1 / -1;
+  }
+}

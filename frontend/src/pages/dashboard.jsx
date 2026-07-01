@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import api from "../services/api";
+import Home from "../pages/Home";
 import DashboardTour from "../components/DashboardTour";
 import "./Dashboard.css";
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [currentPage, setCurrentPage] = useState("home");
   const [user, setUser] = useState(null);
   const [expenses, setExpenses] = useState([]);
   const [income, setIncome] = useState([]);
@@ -56,12 +59,25 @@ export default function Dashboard() {
     );
   }
 
+   function renderPage() {
+    switch(currentPage) {
+      case 'home':
+        return <Home />;
+      case 'expenses':
+        return <div className="page-placeholder">Expenses Page</div>;
+      case 'income':
+        return <div className="page-placeholder">Income Page</div>;
+      default:
+        return <Home />;
+    }
+  }
+
   return (
     <div className="dashboard">
       {/* Tour */}
       <DashboardTour onComplete={handleTourComplete} />
 
-      {/* Sidebar */}
+       {/* Sidebar */}
       <aside className="sidebar">
         <div className="sidebar-brand">
           <span className="brand-icon">⚓</span>
@@ -69,15 +85,24 @@ export default function Dashboard() {
         </div>
 
         <nav className="sidebar-nav">
-          <button className="nav-item active">
-            <span className="nav-icon">📊</span>
-            Ledger
+          <button 
+            className={`nav-item ${currentPage === 'home' ? 'active' : ''}`}
+            onClick={() => setCurrentPage('home')}
+          >
+            <span className="nav-icon">🏠</span>
+            Home
           </button>
-          <button className="nav-item">
+          <button 
+            className={`nav-item ${currentPage === 'expenses' ? 'active' : ''}`}
+            onClick={() => setCurrentPage('expenses')}
+          >
             <span className="nav-icon">💳</span>
             Expenses
           </button>
-          <button className="nav-item">
+          <button 
+            className={`nav-item ${currentPage === 'income' ? 'active' : ''}`}
+            onClick={() => setCurrentPage('income')}
+          >
             <span className="nav-icon">💰</span>
             Income
           </button>
