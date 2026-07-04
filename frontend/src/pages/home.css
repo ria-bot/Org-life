@@ -371,6 +371,57 @@
   color: #2a6a4a;
 }
 
+/* ===== INCOME SUMMARY ===== */
+.income-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  padding: 16px 0;
+  margin-bottom: 16px;
+  border-top: 2px solid #e8e0d8;
+  border-bottom: 2px solid #e8e0d8;
+}
+
+.income-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.income-label {
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  color: #4a5a6a;
+  letter-spacing: 1px;
+}
+
+.income-value {
+  font-family: 'Times New Roman', serif;
+  font-size: 20px;
+  font-weight: bold;
+  color: #1a2a3a;
+}
+
+.income-value.positive {
+  color: #2a6a4a;
+}
+
+.income-value.negative {
+  color: #c44a3a;
+}
+
+.income-value.expense-text {
+  color: #c44a3a;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .income-summary {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+}
+
 /* ===== CATEGORIES SECTION ===== */
 .categories-section {
   background: #fcf8f4;

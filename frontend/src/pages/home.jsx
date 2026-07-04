@@ -34,6 +34,7 @@ export default function Home() {
   const [user, setUser] = useState(null);
   const [weeklyBudget, setWeeklyBudget] = useState(10000);
   const [weeklySpending, setWeeklySpending] = useState(0);
+  const [weeklyIncome, setWeeklyIncome] = useState(0);
   const [dailySpending, setDailySpending] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -52,16 +53,29 @@ export default function Home() {
 
   async function fetchHomeData() {
     try {
+      console.log("🔍 Fetching home data...");
+      
       const userData = await api.getCurrentUser();
       setUser(userData);
+      console.log("✅ User data loaded:", userData);
 
-      // Get expenses
+      // Get expenses and income
       const expenses = await api.getExpenses();
+      const income = await api.getIncome();
+      
+      console.log("📊 Expenses loaded:", expenses.length);
+      console.log("💰 Income loaded:", income.length);
       
       // Calculate weekly spending and daily breakdown
-      const { weeklyTotal, dailyData } = getWeeklyData(expenses);
-      setWeeklySpending(weeklyTotal);
+      const { weeklyTotal: weeklyExpenses, dailyData } = getWeeklyData(expenses);
+      setWeeklySpending(weeklyExpenses);
       setDailySpending(dailyData);
+      console.log("📉 Weekly spending:", weeklyExpenses);
+
+      // Calculate weekly income
+      const weeklyIncomeTotal = getWeeklyIncome(income);
+      setWeeklyIncome(weeklyIncomeTotal);
+      console.log("📈 Weekly income:", weeklyIncomeTotal);
 
       // Get categories
       const categoryList = getCategoryList(expenses);
@@ -92,13 +106,12 @@ export default function Home() {
     const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     const dailyTotal = {};
     
-    // Initialize days with 0
     days.forEach(day => dailyTotal[day] = 0);
 
     let weeklyTotal = 0;
 
     expenses.forEach(e => {
-      const expenseDate = new Date(e.expense_date);
+      const expenseDate = new Date(e.expense_date || e.created_at);
       if (expenseDate >= startOfWeek && expenseDate <= now) {
         const dayIndex = expenseDate.getDay();
         const dayName = days[dayIndex === 0 ? 6 : dayIndex - 1];
@@ -107,7 +120,6 @@ export default function Home() {
       }
     });
 
-    // Convert to array format
     const dailyData = days.map(day => ({
       day,
       amount: dailyTotal[day]
@@ -116,20 +128,39 @@ export default function Home() {
     return { weeklyTotal, dailyData };
   }
 
+  // Get weekly income
+  function getWeeklyIncome(income) {
+    const now = new Date();
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(now.getDate() - now.getDay() + 1);
+
+    let weeklyTotal = 0;
+
+    income.forEach(i => {
+      const incomeDate = new Date(i.created_at);
+      if (incomeDate >= startOfWeek && incomeDate <= now) {
+        weeklyTotal += parseFloat(i.amount);
+      }
+    });
+
+    return weeklyTotal;
+  }
+
   // Get unique categories from expenses
   function getCategoryList(expenses) {
     const categoryMap = {};
     
     expenses.forEach(e => {
-      if (!categoryMap[e.category]) {
-        categoryMap[e.category] = {
-          name: e.category,
+      const categoryName = e.category || 'Uncategorized';
+      if (!categoryMap[categoryName]) {
+        categoryMap[categoryName] = {
+          name: categoryName,
           total: 0,
           count: 0
         };
       }
-      categoryMap[e.category].total += parseFloat(e.amount);
-      categoryMap[e.category].count += 1;
+      categoryMap[categoryName].total += parseFloat(e.amount);
+      categoryMap[categoryName].count += 1;
     });
 
     return Object.values(categoryMap).sort((a, b) => b.total - a.total);
@@ -137,15 +168,8 @@ export default function Home() {
 
   // Chart data
   const getChartData = () => {
-    let filteredData = dailySpending;
-    
-    if (selectedCategory !== 'all') {
-      // Filter by category (would need category filtering in API)
-      // For now, we just show all data
-    }
-
-    const labels = filteredData.map(d => d.day);
-    const values = filteredData.map(d => d.amount);
+    const labels = dailySpending.map(d => d.day);
+    const values = dailySpending.map(d => d.amount);
 
     const colors = ['#1a2a3a', '#2a4a6a', '#4a6a8a', '#6a8aaa', '#8a9aaa', '#c4a882', '#d4c8bc'];
 
@@ -259,6 +283,7 @@ export default function Home() {
   const spendingPercentage = Math.min((weeklySpending / weeklyBudget) * 100, 100);
   const isOverBudget = weeklySpending > weeklyBudget;
   const remaining = weeklyBudget - weeklySpending;
+  const netBalance = weeklyIncome - weeklySpending;
 
   // Handle budget update
   function handleBudgetUpdate(e) {
@@ -324,6 +349,24 @@ export default function Home() {
               className="budget-input"
             />
             <span className="budget-currency">{user?.currency || 'KES'}</span>
+          </div>
+        </div>
+
+        {/* ===== INCOME SUMMARY ===== */}
+        <div className="income-summary">
+          <div className="income-item">
+            <span className="income-label">💰 Weekly Income</span>
+            <span className="income-value">{user?.currency || 'KES'} {weeklyIncome.toFixed(2)}</span>
+          </div>
+          <div className="income-item">
+            <span className="income-label">📉 Weekly Spending</span>
+            <span className="income-value expense-text">{user?.currency || 'KES'} {weeklySpending.toFixed(2)}</span>
+          </div>
+          <div className="income-item">
+            <span className="income-label">📊 Net Balance</span>
+            <span className={`income-value ${netBalance >= 0 ? 'positive' : 'negative'}`}>
+              {user?.currency || 'KES'} {netBalance.toFixed(2)}
+            </span>
           </div>
         </div>
 
@@ -437,7 +480,6 @@ export default function Home() {
                   )}
                 </div>
 
-                {/* Chart Legend */}
                 <div className="chart-stats">
                   <div className="stat-item">
                     <span className="stat-label">Total Spent:</span>
@@ -476,7 +518,6 @@ export default function Home() {
           </button>
         </div>
 
-        {/* Add Category Form */}
         {showAddCategory && (
           <div className="add-category-form">
             <input
@@ -502,7 +543,6 @@ export default function Home() {
           </div>
         )}
 
-        {/* Categories List */}
         <div className="categories-grid">
           {categories.length === 0 ? (
             <div className="empty-categories">
@@ -569,7 +609,8 @@ function getCategoryIcon(category) {
     'Salary': '💰',
     'Freelance': '💻',
     'Business': '📈',
-    'Other': '📦'
+    'Other': '📦',
+    'Uncategorized': '❓'
   };
   return icons[category] || '📦';
 }

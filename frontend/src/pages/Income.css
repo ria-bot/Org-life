@@ -1,0 +1,533 @@
+/* ===== INCOME PAGE ===== */
+.income-page {
+  padding: 20px 0;
+  max-width: 1100px;
+  margin: 0 auto;
+  font-family: 'Courier New', 'Times New Roman', serif;
+}
+
+/* Loading */
+.income-loading {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: #f5f0eb;
+  color: #1a2a3a;
+}
+
+.loader {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #d4c8bc;
+  border-top-color: #1a2a3a;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ===== HEADER ===== */
+.income-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.income-title {
+  font-family: 'Times New Roman', serif;
+  font-size: 28px;
+  color: #1a2a3a;
+  margin-bottom: 4px;
+}
+
+.income-subtitle {
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  color: #4a5a6a;
+}
+
+.add-income-btn {
+  padding: 10px 24px;
+  background: #2a6a4a;
+  color: #f5f0eb;
+  border: 2px solid #2a6a4a;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.add-income-btn:hover {
+  background: #1a4a3a;
+  border-color: #1a4a3a;
+}
+
+/* ===== STATS ===== */
+.income-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background: #fcf8f4;
+  border: 2px solid #d4c8bc;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-card.total .stat-value {
+  color: #2a6a4a;
+}
+
+.stat-card.net .stat-value.positive {
+  color: #2a6a4a;
+}
+
+.stat-card.net .stat-value.negative {
+  color: #c44a3a;
+}
+
+.stat-label {
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  color: #4a5a6a;
+  letter-spacing: 1px;
+}
+
+.stat-value {
+  font-family: 'Times New Roman', serif;
+  font-size: 22px;
+  font-weight: bold;
+  color: #1a2a3a;
+  margin-top: 4px;
+}
+
+/* ===== GOAL ===== */
+.goal-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.goal-progress-container {
+  width: 100%;
+  height: 6px;
+  background: #e8e0d8;
+  border: 1px solid #d4c8bc;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.goal-progress {
+  height: 100%;
+  background: #2a6a4a;
+  transition: width 0.8s ease;
+  border-radius: 3px;
+}
+
+.goal-percentage {
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  color: #4a5a6a;
+}
+
+.goal-edit-btn,
+.goal-set-btn {
+  background: none;
+  border: 1px solid #d4c8bc;
+  padding: 2px 8px;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.3s;
+  align-self: flex-start;
+}
+
+.goal-edit-btn:hover,
+.goal-set-btn:hover {
+  border-color: #1a2a3a;
+  color: #1a2a3a;
+}
+
+.goal-input-container {
+  background: #fcf8f4;
+  border: 2px solid #1a2a3a;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+}
+
+.goal-input-container label {
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  color: #4a5a6a;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.goal-input-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.goal-input {
+  flex: 1;
+  min-width: 150px;
+  padding: 8px 12px;
+  border: 2px solid #d4c8bc;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  background: #fcf8f4;
+  color: #1a2a3a;
+}
+
+.goal-input:focus {
+  outline: none;
+  border-color: #1a2a3a;
+}
+
+.goal-save-btn {
+  padding: 8px 20px;
+  background: #2a6a4a;
+  color: #f5f0eb;
+  border: 2px solid #2a6a4a;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.goal-save-btn:hover {
+  background: #1a4a3a;
+  border-color: #1a4a3a;
+}
+
+.goal-cancel-btn {
+  padding: 8px 20px;
+  background: none;
+  border: 2px solid #d4c8bc;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  color: #4a5a6a;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.goal-cancel-btn:hover {
+  border-color: #1a2a3a;
+  color: #1a2a3a;
+}
+
+/* ===== ADD FORM ===== */
+.add-income-form {
+  background: #fcf8f4;
+  border: 3px solid #1a2a3a;
+  padding: 24px 28px;
+  margin-bottom: 24px;
+  box-shadow: 4px 4px 0 rgba(26, 42, 58, 0.1);
+}
+
+.add-income-form h3 {
+  font-family: 'Times New Roman', serif;
+  font-size: 20px;
+  color: #1a2a3a;
+  margin-bottom: 16px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.form-group {
+  margin-bottom: 14px;
+}
+
+.form-group label {
+  display: block;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  color: #4a5a6a;
+  margin-bottom: 4px;
+  letter-spacing: 1px;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 2px solid #d4c8bc;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  background: #fcf8f4;
+  color: #1a2a3a;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #1a2a3a;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+.cancel-btn {
+  padding: 8px 20px;
+  background: none;
+  border: 2px solid #d4c8bc;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  color: #4a5a6a;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.cancel-btn:hover {
+  border-color: #1a2a3a;
+  color: #1a2a3a;
+}
+
+.save-btn {
+  padding: 8px 24px;
+  background: #2a6a4a;
+  color: #f5f0eb;
+  border: 2px solid #2a6a4a;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.save-btn:hover {
+  background: #1a4a3a;
+  border-color: #1a4a3a;
+}
+
+/* ===== CHARTS ===== */
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  margin-bottom: 32px;
+}
+
+.chart-card {
+  background: #fcf8f4;
+  border: 2px solid #d4c8bc;
+  padding: 20px;
+}
+
+.chart-card h3 {
+  font-family: 'Times New Roman', serif;
+  font-size: 18px;
+  color: #1a2a3a;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.chart-wrapper {
+  height: 220px;
+  position: relative;
+}
+
+.chart-insight {
+  text-align: center;
+  margin-top: 12px;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  padding: 8px;
+  border-top: 1px solid #e8e0d8;
+}
+
+.insight-positive {
+  color: #2a6a4a;
+}
+
+.insight-negative {
+  color: #c44a3a;
+}
+
+/* ===== INCOME LIST ===== */
+.income-list {
+  background: #fcf8f4;
+  border: 3px solid #1a2a3a;
+  padding: 20px 24px;
+  box-shadow: 4px 4px 0 rgba(26, 42, 58, 0.1);
+}
+
+.list-title {
+  font-family: 'Times New Roman', serif;
+  font-size: 20px;
+  color: #1a2a3a;
+  margin-bottom: 16px;
+}
+
+.income-list .income-item {
+  background: #f5f0eb;
+  border: 2px solid #e8e0d8;
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: border-color 0.3s;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+.income-list .income-item:hover {
+  border-color: #1a2a3a;
+}
+
+.income-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.income-amount {
+  font-family: 'Courier New', monospace;
+  font-size: 18px;
+  font-weight: bold;
+  color: #2a6a4a;
+  min-width: 100px;
+}
+
+.income-source {
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  color: #1a2a3a;
+}
+
+.income-date {
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  color: #8a9aaa;
+}
+
+.income-actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.edit-btn {
+  background: none;
+  border: 2px solid #d4c8bc;
+  padding: 4px 10px;
+  font-size: 14px;
+  color: #4a5a6a;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.edit-btn:hover {
+  border-color: #2a4a6a;
+  color: #2a4a6a;
+}
+
+.delete-btn {
+  background: none;
+  border: 2px solid #d4c8bc;
+  padding: 4px 10px;
+  font-size: 14px;
+  color: #4a5a6a;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.delete-btn:hover {
+  border-color: #c44a3a;
+  color: #c44a3a;
+}
+
+/* ===== EMPTY STATE ===== */
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  border: 2px dashed #d4c8bc;
+  background: #f5f0eb;
+}
+
+.empty-state p {
+  font-family: 'Courier New', monospace;
+  font-size: 16px;
+  color: #4a5a6a;
+  margin: 4px 0;
+}
+
+.empty-hint {
+  font-size: 13px !important;
+  color: #8a9aaa !important;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .income-stats {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .income-header {
+    flex-direction: column;
+  }
+
+  .add-income-btn {
+    width: 100%;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .chart-wrapper {
+    height: 200px;
+  }
+
+  .income-list .income-item {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .income-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .income-actions {
+    justify-content: flex-start;
+    margin-top: 6px;
+  }
+
+  .goal-input-row {
+    flex-direction: column;
+  }
+
+  .goal-input {
+    width: 100%;
+  }
+}

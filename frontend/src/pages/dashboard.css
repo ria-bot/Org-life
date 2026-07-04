@@ -260,6 +260,21 @@
   color: #2a6a4a !important;
 }
 
+/* Balance positive/negative colors */
+.stat-value.positive {
+  color: #2a6a4a;
+}
+
+.stat-value.negative {
+  color: #c44a3a;
+}
+
+/* Make sure stat card balance handles both */
+.stat-card.balance .stat-value {
+  font-size: 28px;
+  font-weight: 800;
+}
+
 .expense-text {
   color: #8a3a2a !important;
 }

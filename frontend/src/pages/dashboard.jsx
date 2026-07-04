@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import Home from "./Home";
+import Expenses from "./Expenses";
+import Categories from "./Categories";
+import Income from "../pages/Income";
 import DashboardTour from "../components/DashboardTour";
-import Expenses from "../pages/Expenses";
 import "./Dashboard.css";
 
 export default function Dashboard() {
@@ -57,7 +59,9 @@ export default function Dashboard() {
       case 'expenses':
         return <Expenses />;
       case 'income':
-        return <div className="page-placeholder">Income Page (Coming Soon)</div>;
+        return <Income />;
+      case 'categories':
+        return <Categories />;
       default:
         return <Home />;
     }
@@ -96,7 +100,7 @@ export default function Dashboard() {
             className={`nav-item ${currentPage === 'expenses' ? 'active' : ''}`}
             onClick={() => setCurrentPage('expenses')}
           >
-            <span className="nav-icon">💳</span>
+            <span className="nav-icon">📉</span>
             Expenses
           </button>
           <button 
@@ -105,6 +109,13 @@ export default function Dashboard() {
           >
             <span className="nav-icon">💰</span>
             Income
+          </button>
+          <button 
+            className={`nav-item ${currentPage === 'categories' ? 'active' : ''}`}
+            onClick={() => setCurrentPage('categories')}
+          >
+            <span className="nav-icon">🏆</span>
+            Rankings
           </button>
         </nav>
 
@@ -127,7 +138,7 @@ export default function Dashboard() {
       {/* Main Content */}
       <main className="main-content">
         {/* Only show header on non-home pages */}
-        {currentPage !== 'home' && (
+        {currentPage !== 'home' && currentPage !== 'categories' && (
           <header className="dashboard-header">
             <div>
               <h1 className="dashboard-title" id="dashboard-title">
@@ -223,7 +234,7 @@ export default function Dashboard() {
           </>
         )}
 
-        {/* Render the page content (Home, Expenses, Income) */}
+        {/* Render the page content */}
         {renderPage()}
       </main>
     </div>

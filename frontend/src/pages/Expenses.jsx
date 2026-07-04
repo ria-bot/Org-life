@@ -10,15 +10,15 @@ export default function Expenses() {
   const [uncategorized, setUncategorized] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [editingId, setEditingId] = useState(null);
   
-  // Form states
   const [newExpense, setNewExpense] = useState({
     amount: '',
     description: '',
     transaction_date: new Date().toISOString().split('T')[0]
   });
 
-  const [filter, setFilter] = useState('all'); // all, categorized, uncategorized
+  const [filter, setFilter] = useState('all');
 
   useEffect(() => {
     fetchUserAndExpenses();
@@ -28,7 +28,6 @@ export default function Expenses() {
     try {
       const userData = await api.getCurrentUser();
       setUser(userData);
-
       await fetchExpenses();
     } catch (error) {
       console.error('Error:', error);
@@ -42,11 +41,8 @@ export default function Expenses() {
 
   async function fetchExpenses() {
     try {
-      // Get all expense transactions
       const expensesData = await api.getExpenses();
       setTransactions(expensesData);
-
-      // Get uncategorized expenses
       const uncatData = await api.getUncategorized();
       setUncategorized(uncatData);
     } catch (error) {
@@ -54,7 +50,38 @@ export default function Expenses() {
     }
   }
 
-  // Add new expense
+  function toggleForm() {
+    if (!showAddForm) {
+      setNewExpense({
+        amount: '',
+        description: '',
+        transaction_date: new Date().toISOString().split('T')[0]
+      });
+      setEditingId(null);
+    }
+    setShowAddForm(!showAddForm);
+  }
+
+  function resetForm() {
+    setNewExpense({
+      amount: '',
+      description: '',
+      transaction_date: new Date().toISOString().split('T')[0]
+    });
+    setEditingId(null);
+    setShowAddForm(false);
+  }
+
+  function startEditing(transaction) {
+    setEditingId(transaction.id);
+    setNewExpense({
+      amount: transaction.amount,
+      description: transaction.description || '',
+      transaction_date: transaction.created_at ? new Date(transaction.created_at).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]
+    });
+    setShowAddForm(true);
+  }
+
   async function handleAddExpense(e) {
     e.preventDefault();
     
@@ -64,30 +91,30 @@ export default function Expenses() {
     }
 
     try {
-      await api.addExpense({
-        amount: parseFloat(newExpense.amount),
-        description: newExpense.description || 'No description',
-        transaction_date: newExpense.transaction_date
-      });
+      if (editingId) {
+        await api.updateTransaction(editingId, {
+          amount: parseFloat(newExpense.amount),
+          description: newExpense.description || 'No description',
+          type: 'expense'
+        });
+        alert('✅ Expense updated successfully!');
+      } else {
+        await api.addExpense({
+          amount: parseFloat(newExpense.amount),
+          description: newExpense.description || 'No description',
+          transaction_date: newExpense.transaction_date
+        });
+        alert('✅ Expense added successfully!');
+      }
 
-      setNewExpense({
-        amount: '',
-        description: '',
-        transaction_date: new Date().toISOString().split('T')[0]
-      });
-      setShowAddForm(false);
-      
-      // Refresh the list
+      resetForm();
       await fetchExpenses();
-      
-      alert('✅ Expense added successfully!');
     } catch (error) {
-      console.error('Error adding expense:', error);
-      alert('Failed to add expense: ' + error.message);
+      console.error('Error saving expense:', error);
+      alert('Failed to save expense: ' + error.message);
     }
   }
 
-  // Categorize a transaction
   async function handleCategorize(transactionId, category) {
     try {
       await api.categorizeTransaction(transactionId, category);
@@ -98,9 +125,7 @@ export default function Expenses() {
     }
   }
 
-  // Delete a transaction - FIXED: using custom confirm
   async function handleDelete(id) {
-    // Use a custom confirm dialog instead of window.confirm
     const userConfirmed = window.confirm('Are you sure you want to delete this expense?');
     if (!userConfirmed) return;
     
@@ -113,7 +138,6 @@ export default function Expenses() {
     }
   }
 
-  // Get filtered transactions
   const getFilteredTransactions = () => {
     if (filter === 'categorized') {
       return transactions.filter(t => t.category !== null);
@@ -125,7 +149,6 @@ export default function Expenses() {
 
   const filteredTransactions = getFilteredTransactions();
 
-  // Calculate totals
   const totalExpenses = transactions.reduce((sum, t) => sum + parseFloat(t.amount), 0);
   const totalCategorized = transactions.filter(t => t.category !== null)
     .reduce((sum, t) => sum + parseFloat(t.amount), 0);
@@ -143,8 +166,7 @@ export default function Expenses() {
 
   return (
     <div className="expenses-page">
-
-      {/* Stats Cards */}
+      {/* ===== STATS CARDS WITH ADD BUTTON ===== */}
       <div className="expenses-stats">
         <div className="stat-card">
           <span className="stat-label">Total Spent</span>
@@ -162,12 +184,19 @@ export default function Expenses() {
           <span className="stat-label">Total Transactions</span>
           <span className="stat-value">{transactions.length}</span>
         </div>
+        {/* 👇 ONLY BUTTON - RIGHT HERE IN THE STATS CARD */}
+        <button 
+          className="add-expense-btn"
+          onClick={toggleForm}
+        >
+          {showAddForm ? '✕ Cancel' : '+ Add Expense'}
+        </button>
       </div>
 
-      {/* Add Expense Form */}
+      {/* ===== FORM ===== */}
       {showAddForm && (
         <div className="add-expense-form">
-          <h3>Add New Expense</h3>
+          <h3>{editingId ? '✏️ Edit Expense' : '➕ Add New Expense'}</h3>
           <form onSubmit={handleAddExpense}>
             <div className="form-row">
               <div className="form-group">
@@ -201,18 +230,18 @@ export default function Expenses() {
               />
             </div>
             <div className="form-actions">
-              <button type="button" className="cancel-btn" onClick={() => setShowAddForm(false)}>
+              <button type="button" className="cancel-btn" onClick={resetForm}>
                 Cancel
               </button>
               <button type="submit" className="save-btn">
-                💾 Save Expense
+                {editingId ? '💾 Update Expense' : '💾 Save Expense'}
               </button>
             </div>
           </form>
         </div>
       )}
 
-      {/* Filters */}
+      {/* ===== FILTERS ===== */}
       <div className="expenses-filters">
         <div className="filter-group">
           <button 
@@ -236,12 +265,12 @@ export default function Expenses() {
         </div>
       </div>
 
-      {/* Expenses List */}
+      {/* ===== EXPENSES LIST ===== */}
       <div className="expenses-list">
         {filteredTransactions.length === 0 ? (
           <div className="empty-state">
             <p>No expenses found</p>
-            <p className="empty-hint">Add your first expense to start tracking!</p>
+            <p className="empty-hint">Click "+ Add Expense" to start tracking!</p>
           </div>
         ) : (
           filteredTransactions.map((transaction) => (
@@ -269,6 +298,14 @@ export default function Expenses() {
               </div>
               
               <div className="expense-actions">
+                <button 
+                  className="edit-btn"
+                  onClick={() => startEditing(transaction)}
+                  title="Edit expense"
+                >
+                  ✏️
+                </button>
+
                 {!transaction.category && (
                   <select 
                     className="categorize-select"
@@ -307,7 +344,7 @@ export default function Expenses() {
         )}
       </div>
 
-      {/* Uncategorized Summary */}
+      {/* ===== UNCATEGORIZED SUMMARY ===== */}
       {uncategorized.length > 0 && (
         <div className="uncategorized-summary">
           <div className="summary-header">
@@ -325,7 +362,6 @@ export default function Expenses() {
   );
 }
 
-// Helper: Get icon for category
 function getCategoryIcon(category) {
   const icons = {
     'Food': '🍔',

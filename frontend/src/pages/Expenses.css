@@ -388,6 +388,30 @@
   margin-top: 4px;
 }
 
+.edit-btn {
+  background: none;
+  border: 2px solid #d4c8bc;
+  padding: 4px 10px;
+  font-size: 14px;
+  color: #4a5a6a;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.edit-btn:hover {
+  border-color: #2a4a6a;
+  color: #2a4a6a;
+  background: rgba(42, 74, 106, 0.05);
+}
+
+/* Make sure expense actions are aligned */
+.expense-actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
   .expenses-stats {
@@ -417,12 +441,13 @@
     gap: 6px;
   }
 
-  .expense-actions {
-    justify-content: flex-start;
-    margin-top: 6px;
-  }
-
   .filter-group {
     justify-content: center;
+  }
+
+  .expense-actions {
+    width: 100%;
+    justify-content: flex-start;
+    margin-top: 6px;
   }
 }
