@@ -45,6 +45,39 @@ class Budgeter {
         return rows[0];
     }
 
+    // List / search all budgeters (admin)
+    static async findAll({ search = '', page = 1, limit = 20 } = {}) {
+        const offset = (page - 1) * limit;
+        const searchTerm = `%${search}%`;
+
+        const [rows] = await pool.query(
+            `SELECT id, email, full_name, phone_number, currency, role, is_active, 
+                    is_verified, created_at
+             FROM budgeters
+             WHERE full_name LIKE ? OR email LIKE ? OR phone_number LIKE ?
+             ORDER BY created_at DESC
+             LIMIT ? OFFSET ?`,
+            [searchTerm, searchTerm, searchTerm, limit, offset]
+        );
+
+        const [[{ total }]] = await pool.execute(
+            `SELECT COUNT(*) as total FROM budgeters
+             WHERE full_name LIKE ? OR email LIKE ? OR phone_number LIKE ?`,
+            [searchTerm, searchTerm, searchTerm]
+        );
+
+        return { users: rows, total, page, limit };
+    }
+
+    // Activate / deactivate a budgeter
+    static async setActiveStatus(id, isActive) {
+        const [result] = await pool.execute(
+            'UPDATE budgeters SET is_active = ? WHERE id = ?',
+            [isActive, id]
+        );
+        return result.affectedRows > 0;
+    }
+
     // Update budgeter
     static async update(id, data) {
         const fields = [];

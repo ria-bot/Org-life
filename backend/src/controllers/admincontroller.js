@@ -77,17 +77,17 @@ exports.deleteUser = async (req, res) => {
 // Shared UNION query: normalizes transactions + expenses + income into one shape
 const TRANSACTIONS_UNION_SQL = `
   SELECT 
-    CONCAT('transactions-', t.id) as row_id,
-    'transactions' as source_table,
+    CONCAT('transactions-', t.id) COLLATE utf8mb4_unicode_ci as row_id,
+    'transactions' COLLATE utf8mb4_unicode_ci as source_table,
     t.id as original_id,
     t.budgeter_id,
-    b.full_name as user_name,
-    b.email as user_email,
-    t.type,
+    b.full_name COLLATE utf8mb4_unicode_ci as user_name,
+    b.email COLLATE utf8mb4_unicode_ci as user_email,
+    t.type COLLATE utf8mb4_unicode_ci as type,
     t.amount,
-    t.category,
-    t.description,
-    t.reference,
+    t.category COLLATE utf8mb4_unicode_ci as category,
+    t.description COLLATE utf8mb4_unicode_ci as description,
+    t.reference COLLATE utf8mb4_unicode_ci as reference,
     t.created_at as txn_date
   FROM transactions t
   JOIN budgeters b ON t.budgeter_id = b.id
@@ -95,18 +95,34 @@ const TRANSACTIONS_UNION_SQL = `
   UNION ALL
 
   SELECT
-    CONCAT('expenses-', e.id), 'expenses', e.id, e.budgeter_id,
-    b.full_name, b.email, 'expense', e.amount, e.category, e.description,
-    NULL, e.expense_date
+    CONCAT('expenses-', e.id) COLLATE utf8mb4_unicode_ci,
+    'expenses' COLLATE utf8mb4_unicode_ci,
+    e.id, e.budgeter_id,
+    b.full_name COLLATE utf8mb4_unicode_ci,
+    b.email COLLATE utf8mb4_unicode_ci,
+    'expense' COLLATE utf8mb4_unicode_ci,
+    e.amount,
+    e.category COLLATE utf8mb4_unicode_ci,
+    e.description COLLATE utf8mb4_unicode_ci,
+    NULL,
+    e.expense_date
   FROM expenses e
   JOIN budgeters b ON e.budgeter_id = b.id
 
   UNION ALL
 
   SELECT
-    CONCAT('income-', i.id), 'income', i.id, i.budgeter_id,
-    b.full_name, b.email, 'income', i.amount, i.source, i.description,
-    NULL, i.income_date
+    CONCAT('income-', i.id) COLLATE utf8mb4_unicode_ci,
+    'income' COLLATE utf8mb4_unicode_ci,
+    i.id, i.budgeter_id,
+    b.full_name COLLATE utf8mb4_unicode_ci,
+    b.email COLLATE utf8mb4_unicode_ci,
+    'income' COLLATE utf8mb4_unicode_ci,
+    i.amount,
+    i.source COLLATE utf8mb4_unicode_ci,
+    i.description COLLATE utf8mb4_unicode_ci,
+    NULL,
+    i.income_date
   FROM income i
   JOIN budgeters b ON i.budgeter_id = b.id
 `;

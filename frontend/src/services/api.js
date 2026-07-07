@@ -199,6 +199,28 @@ getDailySpending(startDate, endDate) {
 getMonthlySummary(month) {
     return this.request(`/transactions/summary/monthly?month=${month}`);
 },
+// ============ ADMIN: USER MANAGEMENT ============
+    getAllUsers(params = {}) {
+        const query = new URLSearchParams(params).toString();
+        return this.request(`/admin/users${query ? '?' + query : ''}`);
+    },
+
+    getUserById(id) {
+        return this.request(`/admin/users/${id}`);
+    },
+
+    toggleUserStatus(id, is_active) {
+        return this.request(`/admin/users/${id}/status`, {
+            method: 'PUT',
+            body: JSON.stringify({ is_active })
+        });
+    },
+
+    deleteUser(id) {
+        return this.request(`/admin/users/${id}`, {
+            method: 'DELETE'
+        });
+    },
 
 // ============ ADMIN: TRANSACTION MANAGEMENT ============
     getAllTransactionsAdmin(params = {}) {
