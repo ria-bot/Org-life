@@ -35,7 +35,7 @@ class Budgeter {
     static async findById(id) {
         const [rows] = await pool.execute(
             `SELECT b.id, b.email, b.full_name, b.phone_number, b.currency, 
-                    b.is_verified, b.created_at, b.updated_at,
+                    b.is_verified, b.role, b.is_active, b.created_at, b.updated_at,
                     p.avatar_url
              FROM budgeters b
              LEFT JOIN profiles p ON b.id = p.id
