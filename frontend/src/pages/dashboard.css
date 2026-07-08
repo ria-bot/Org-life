@@ -30,7 +30,9 @@
   to { transform: rotate(360deg); }
 }
 
-/* Sidebar */
+/* ============================================================ */
+/* ===== SIDEBAR ============================================== */
+/* ============================================================ */
 .sidebar {
   width: 220px;
   min-height: 100vh;
@@ -43,6 +45,8 @@
   top: 0;
   left: 0;
   bottom: 0;
+  z-index: 100;
+  transition: transform 0.3s ease;
 }
 
 .sidebar-brand {
@@ -83,6 +87,7 @@
   cursor: pointer;
   transition: all 0.3s;
   text-align: left;
+  width: 100%;
 }
 
 .nav-item:hover {
@@ -98,11 +103,13 @@
 
 .nav-icon {
   font-size: 18px;
+  min-width: 24px;
 }
 
 .sidebar-footer {
   padding-top: 16px;
   border-top: 2px solid #1a2a3a;
+  margin-top: auto;
 }
 
 .user-info {
@@ -125,17 +132,21 @@
   justify-content: center;
   font-weight: bold;
   font-size: 16px;
+  flex-shrink: 0;
 }
 
 .user-name {
   font-size: 14px;
   font-weight: bold;
   color: #1a2a3a;
+  margin: 0;
 }
 
 .user-email {
   font-size: 11px;
   color: #4a5a6a;
+  margin: 0;
+  word-break: break-all;
 }
 
 .signout-btn {
@@ -155,6 +166,39 @@
   color: #c44a3a;
 }
 
+/* ===== MOBILE HAMBURGER ===== */
+.mobile-toggle {
+  display: none;
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 200;
+  background: #1a2a3a;
+  color: #f5f0eb;
+  border: 2px solid #1a2a3a;
+  padding: 8px 12px;
+  font-size: 20px;
+  cursor: pointer;
+  font-family: 'Courier New', monospace;
+}
+
+.mobile-toggle:hover {
+  background: #2a4a6a;
+  border-color: #2a4a6a;
+}
+
+/* Sidebar overlay for mobile */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 99;
+}
+
 /* ===== PAGE PLACEHOLDER ===== */
 .page-placeholder {
   padding: 40px;
@@ -166,11 +210,16 @@
   color: #4a5a6a;
 }
 
-/* Main Content */
+/* ============================================================ */
+/* ===== MAIN CONTENT ========================================= */
+/* ============================================================ */
 .main-content {
   flex: 1;
   margin-left: 220px;
   padding: 32px 40px;
+  min-height: 100vh;
+  width: calc(100% - 220px);
+  transition: margin-left 0.3s ease;
 }
 
 .dashboard-header {
@@ -178,6 +227,8 @@
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 28px;
+  flex-wrap: wrap;
+  gap: 16px;
 }
 
 .dashboard-title {
@@ -202,6 +253,7 @@
   font-size: 13px;
   cursor: pointer;
   transition: all 0.3s;
+  white-space: nowrap;
 }
 
 .add-btn:hover {
@@ -209,7 +261,9 @@
   border-color: #2a4a6a;
 }
 
-/* Stats */
+/* ============================================================ */
+/* ===== STATS ================================================ */
+/* ============================================================ */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -252,15 +306,6 @@
   color: #1a2a3a;
 }
 
-.stat-card.balance .stat-value {
-  color: #1a2a3a;
-}
-
-.income-text {
-  color: #2a6a4a !important;
-}
-
-/* Balance positive/negative colors */
 .stat-value.positive {
   color: #2a6a4a;
 }
@@ -269,17 +314,22 @@
   color: #c44a3a;
 }
 
-/* Make sure stat card balance handles both */
 .stat-card.balance .stat-value {
   font-size: 28px;
   font-weight: 800;
+}
+
+.income-text {
+  color: #2a6a4a !important;
 }
 
 .expense-text {
   color: #8a3a2a !important;
 }
 
-/* Recent Sections */
+/* ============================================================ */
+/* ===== RECENT SECTIONS ====================================== */
+/* ============================================================ */
 .recent-section {
   background: #fcf8f4;
   border: 2px solid #d4c8bc;
@@ -298,6 +348,7 @@
   font-family: 'Times New Roman', serif;
   font-size: 20px;
   color: #1a2a3a;
+  margin: 0;
 }
 
 .ledger-list {
@@ -323,12 +374,14 @@
   font-size: 14px;
   font-weight: bold;
   color: #1a2a3a;
+  margin: 0;
 }
 
 .ledger-date {
   font-size: 12px;
   color: #4a5a6a;
   font-family: 'Courier New', monospace;
+  margin: 0;
 }
 
 .ledger-amount {
@@ -343,48 +396,339 @@
   color: #4a5a6a;
   padding: 20px 0;
   text-align: center;
+  margin: 0;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .sidebar {
-    width: 60px;
-    padding: 16px 8px;
-  }
+/* ============================================================ */
+/* ===== RESPONSIVE ============================================ */
+/* ============================================================ */
 
-  .sidebar-brand span:not(.brand-icon),
-  .nav-item span:not(.nav-icon),
-  .user-info div,
-  .user-name,
-  .user-email,
-  .signout-btn {
-    display: none;
-  }
-
-  .sidebar-brand {
-    justify-content: center;
-  }
-
-  .nav-item {
-    justify-content: center;
-    padding: 12px;
-  }
-
-  .user-info {
-    justify-content: center;
-    padding: 0;
+/* ===== TABLET ===== */
+@media (max-width: 1024px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .main-content {
-    margin-left: 60px;
-    padding: 20px;
+    padding: 24px 28px;
+  }
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 768px) {
+  /* Show mobile toggle */
+  .mobile-toggle {
+    display: block;
+  }
+
+  /* Sidebar - slide out */
+  .sidebar {
+    transform: translateX(-100%);
+    width: 280px;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .sidebar-overlay.active {
+    display: block;
+  }
+
+  /* Main content */
+  .main-content {
+    margin-left: 0;
+    padding: 20px 16px;
+    width: 100%;
+    padding-top: 60px;
   }
 
   .stats-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .stat-value {
+    font-size: 20px;
+  }
+
+  .stat-card {
+    padding: 14px 18px;
   }
 
   .dashboard-title {
     font-size: 22px;
   }
+
+  .dashboard-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .add-btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  .recent-section {
+    padding: 14px 16px;
+  }
+
+  .ledger-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .ledger-amount {
+    align-self: flex-end;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  /* Sidebar brand on mobile */
+  .sidebar-brand {
+    font-size: 18px;
+  }
+
+  .user-info {
+    flex-wrap: wrap;
+  }
+
+  .user-email {
+    font-size: 10px;
+  }
+}
+
+/* ===== SMALL MOBILE ===== */
+@media (max-width: 480px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .main-content {
+    padding: 16px 12px;
+    padding-top: 56px;
+  }
+
+  .stat-value {
+    font-size: 18px;
+  }
+
+  .dashboard-title {
+    font-size: 20px;
+  }
+
+  .sidebar {
+    width: 260px;
+  }
+
+  .mobile-toggle {
+    padding: 6px 10px;
+    font-size: 18px;
+    top: 8px;
+    left: 8px;
+  }
+
+  .recent-section {
+    padding: 12px 14px;
+  }
+
+  .ledger-item {
+    padding: 8px 12px;
+  }
+
+  .ledger-category {
+    font-size: 13px;
+  }
+
+  .ledger-amount {
+    font-size: 14px;
+  }
+
+  .add-btn {
+    padding: 8px 16px;
+    font-size: 12px;
+  }
+
+  .stat-card {
+    padding: 12px 16px;
+  }
+
+  .stat-icon {
+    font-size: 16px;
+  }
+
+  .stat-label {
+    font-size: 11px;
+  }
+}
+
+/* ============================================================ */
+/* ===== DARK THEME SUPPORT ==================================== */
+/* ============================================================ */
+
+[data-theme="dark"] .dashboard {
+  background: #0a0515;
+}
+
+[data-theme="dark"] .sidebar {
+  background: rgba(26, 10, 46, 0.95);
+  border-right-color: rgba(251, 191, 36, 0.2);
+}
+
+[data-theme="dark"] .sidebar-brand {
+  color: #f3e8ff;
+  border-bottom-color: rgba(251, 191, 36, 0.2);
+}
+
+[data-theme="dark"] .brand-icon {
+  color: #fbbf24;
+}
+
+[data-theme="dark"] .nav-item {
+  color: #c4b5d4;
+}
+
+[data-theme="dark"] .nav-item:hover {
+  color: #f3e8ff;
+}
+
+[data-theme="dark"] .nav-item.active {
+  border-color: #fbbf24;
+  color: #fbbf24;
+  background: rgba(251, 191, 36, 0.05);
+}
+
+[data-theme="dark"] .sidebar-footer {
+  border-top-color: rgba(251, 191, 36, 0.2);
+}
+
+[data-theme="dark"] .user-info {
+  background: rgba(251, 191, 36, 0.05);
+}
+
+[data-theme="dark"] .user-name {
+  color: #f3e8ff;
+}
+
+[data-theme="dark"] .user-email {
+  color: #c4b5d4;
+}
+
+[data-theme="dark"] .signout-btn {
+  border-color: rgba(251, 191, 36, 0.2);
+  color: #c4b5d4;
+}
+
+[data-theme="dark"] .signout-btn:hover {
+  border-color: #f87171;
+  color: #f87171;
+}
+
+[data-theme="dark"] .mobile-toggle {
+  background: #fbbf24;
+  color: #1a0a2e;
+  border-color: #fbbf24;
+}
+
+[data-theme="dark"] .mobile-toggle:hover {
+  background: #f59e0b;
+  border-color: #f59e0b;
+}
+
+[data-theme="dark"] .sidebar-overlay.active {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+[data-theme="dark"] .main-content {
+  background: #0a0515;
+}
+
+[data-theme="dark"] .dashboard-title {
+  color: #f3e8ff;
+}
+
+[data-theme="dark"] .dashboard-subtitle {
+  color: #c4b5d4;
+}
+
+[data-theme="dark"] .stat-card {
+  background: rgba(26, 10, 46, 0.6);
+  border-color: rgba(251, 191, 36, 0.1);
+}
+
+[data-theme="dark"] .stat-card:hover {
+  border-color: rgba(251, 191, 36, 0.3);
+}
+
+[data-theme="dark"] .stat-label {
+  color: #c4b5d4;
+}
+
+[data-theme="dark"] .stat-value {
+  color: #f3e8ff;
+}
+
+[data-theme="dark"] .stat-value.positive {
+  color: #4a8a6a;
+}
+
+[data-theme="dark"] .stat-value.negative {
+  color: #f87171;
+}
+
+[data-theme="dark"] .stat-card.balance .stat-value {
+  color: #f3e8ff;
+}
+
+[data-theme="dark"] .recent-section {
+  background: rgba(26, 10, 46, 0.6);
+  border-color: rgba(251, 191, 36, 0.1);
+}
+
+[data-theme="dark"] .section-header h2 {
+  color: #f3e8ff;
+}
+
+[data-theme="dark"] .ledger-item {
+  border-color: rgba(251, 191, 36, 0.05);
+}
+
+[data-theme="dark"] .ledger-item:hover {
+  border-color: rgba(251, 191, 36, 0.15);
+}
+
+[data-theme="dark"] .ledger-category {
+  color: #f3e8ff;
+}
+
+[data-theme="dark"] .ledger-date {
+  color: #c4b5d4;
+}
+
+[data-theme="dark"] .empty-state {
+  color: #c4b5d4;
+}
+
+[data-theme="dark"] .add-btn {
+  background: #fbbf24;
+  color: #1a0a2e;
+  border-color: #fbbf24;
+}
+
+[data-theme="dark"] .add-btn:hover {
+  background: #f59e0b;
+  border-color: #f59e0b;
+}
+
+[data-theme="dark"] .page-placeholder {
+  background: rgba(26, 10, 46, 0.6);
+  border-color: rgba(251, 191, 36, 0.2);
+  color: #c4b5d4;
 }

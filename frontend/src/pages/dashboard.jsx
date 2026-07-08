@@ -4,8 +4,9 @@ import api from "../services/api";
 import Home from "./Home";
 import Expenses from "./Expenses";
 import Categories from "./Categories";
-import Income from "../pages/Income";
+import Income from "./Income";
 import DashboardTour from "../components/DashboardTour";
+import Profile from "./Profile";
 import "./Dashboard.css";
 
 export default function Dashboard() {
@@ -16,6 +17,7 @@ export default function Dashboard() {
   const [income, setIncome] = useState([]);
   const [loading, setLoading] = useState(true);
   const [tourComplete, setTourComplete] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false); // 👈 ADD THIS
 
   useEffect(() => {
     fetchDashboardData();
@@ -29,7 +31,7 @@ export default function Dashboard() {
       const expensesData = await api.getExpenses({ limit: 5 });
       setExpenses(expensesData);
 
-      const incomeData = await api.getIncomes({ limit: 5 });
+      const incomeData = await api.getIncome({ limit: 5 });
       setIncome(incomeData);
     } catch (error) {
       console.error('Error:', error);
@@ -52,6 +54,19 @@ export default function Dashboard() {
     setTourComplete(true);
   };
 
+  // 👇 ADD THESE FUNCTIONS
+  function toggleSidebar() {
+    setSidebarOpen(!sidebarOpen);
+  }
+
+  function handleNavClick(page) {
+    setCurrentPage(page);
+    // Close sidebar on mobile after navigation
+    if (window.innerWidth <= 768) {
+      setSidebarOpen(false);
+    }
+  }
+
   function renderPage() {
     switch(currentPage) {
       case 'home':
@@ -62,6 +77,8 @@ export default function Dashboard() {
         return <Income />;
       case 'categories':
         return <Categories />;
+      case 'profile':
+        return <Profile />;
       default:
         return <Home />;
     }
@@ -81,8 +98,19 @@ export default function Dashboard() {
       {/* Tour */}
       <DashboardTour onComplete={handleTourComplete} />
 
-      {/* Sidebar */}
-      <aside className="sidebar">
+      {/* 👇 ADD MOBILE TOGGLE BUTTON */}
+      <button className="mobile-toggle" onClick={toggleSidebar}>
+        ☰
+      </button>
+
+      {/* 👇 ADD SIDEBAR OVERLAY */}
+      <div 
+        className={`sidebar-overlay ${sidebarOpen ? 'active' : ''}`} 
+        onClick={() => setSidebarOpen(false)}
+      />
+
+      {/* Sidebar with open class */}
+      <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
         <div className="sidebar-brand">
           <span className="brand-icon">⚓</span>
           <span className="brand-text">Org-Life</span>
@@ -91,31 +119,38 @@ export default function Dashboard() {
         <nav className="sidebar-nav">
           <button 
             className={`nav-item ${currentPage === 'home' ? 'active' : ''}`}
-            onClick={() => setCurrentPage('home')}
+            onClick={() => handleNavClick('home')}
           >
             <span className="nav-icon">🏠</span>
             Home
           </button>
           <button 
             className={`nav-item ${currentPage === 'expenses' ? 'active' : ''}`}
-            onClick={() => setCurrentPage('expenses')}
+            onClick={() => handleNavClick('expenses')}
           >
             <span className="nav-icon">📉</span>
             Expenses
           </button>
           <button 
             className={`nav-item ${currentPage === 'income' ? 'active' : ''}`}
-            onClick={() => setCurrentPage('income')}
+            onClick={() => handleNavClick('income')}
           >
             <span className="nav-icon">💰</span>
             Income
           </button>
           <button 
             className={`nav-item ${currentPage === 'categories' ? 'active' : ''}`}
-            onClick={() => setCurrentPage('categories')}
+            onClick={() => handleNavClick('categories')}
           >
             <span className="nav-icon">🏆</span>
             Rankings
+          </button>
+          <button 
+            className={`nav-item ${currentPage === 'profile' ? 'active' : ''}`}
+            onClick={() => handleNavClick('profile')}
+          >
+            <span className="nav-icon">👤</span>
+            Profile
           </button>
         </nav>
 
@@ -137,23 +172,6 @@ export default function Dashboard() {
 
       {/* Main Content */}
       <main className="main-content">
-        {/* Only show header on non-home pages */}
-        {currentPage !== 'home' && currentPage !== 'categories' && (
-          <header className="dashboard-header">
-            <div>
-              <h1 className="dashboard-title" id="dashboard-title">
-                {currentPage === 'expenses' ? '📉 Expenses' : '💰 Income'}
-              </h1>
-              <p className="dashboard-subtitle">
-                Manage your {currentPage}
-              </p>
-            </div>
-            <button className="add-btn">
-              + Add {currentPage === 'expenses' ? 'Expense' : 'Income'}
-            </button>
-          </header>
-        )}
-
         {/* Stats only on home page */}
         {currentPage === 'home' && (
           <>
@@ -164,7 +182,9 @@ export default function Dashboard() {
                   <span className="stat-icon">💰</span>
                   <span className="stat-label">Balance</span>
                 </div>
-                <p className="stat-value">{user?.currency || 'KES'} {balance.toLocaleString()}</p>
+                <p className={`stat-value ${balance >= 0 ? 'positive' : 'negative'}`}>
+                  {user?.currency || 'KES'} {balance.toLocaleString()}
+                </p>
               </div>
 
               <div className="stat-card income">
@@ -196,8 +216,8 @@ export default function Dashboard() {
                   expenses.map((expense) => (
                     <div key={expense.id} className="ledger-item">
                       <div>
-                        <p className="ledger-category">{expense.category}</p>
-                        <p className="ledger-date">{expense.expense_date}</p>
+                        <p className="ledger-category">{expense.category || 'Uncategorized'}</p>
+                        <p className="ledger-date">{expense.expense_date || new Date(expense.created_at).toLocaleDateString()}</p>
                       </div>
                       <p className="ledger-amount expense-text">
                         -{user?.currency || 'KES'} {parseFloat(expense.amount).toLocaleString()}
@@ -220,8 +240,8 @@ export default function Dashboard() {
                   income.map((item) => (
                     <div key={item.id} className="ledger-item">
                       <div>
-                        <p className="ledger-category">{item.source}</p>
-                        <p className="ledger-date">{item.income_date}</p>
+                        <p className="ledger-category">{item.description || 'Income'}</p>
+                        <p className="ledger-date">{new Date(item.created_at).toLocaleDateString()}</p>
                       </div>
                       <p className="ledger-amount income-text">
                         +{user?.currency || 'KES'} {parseFloat(item.amount).toLocaleString()}
