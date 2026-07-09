@@ -29,7 +29,7 @@ ChartJS.register(
   LineElement
 );
 
-export default function Income() {
+export default function Income({ onDataChange }) { // ✅ ADDED onDataChange prop
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [transactions, setTransactions] = useState([]);
@@ -50,7 +50,7 @@ export default function Income() {
     amount: '',
     source: '',
     description: '',
-    income_date: new Date().toISOString().split('T')[0], // Changed from transaction_date
+    income_date: new Date().toISOString().split('T')[0],
     is_recurring: false
   });
 
@@ -75,7 +75,7 @@ export default function Income() {
 
   async function fetchIncome() {
     try {
-      const incomeData = await api.getIncome(); // This should use the correct endpoint
+      const incomeData = await api.getIncome();
       setTransactions(incomeData);
     } catch (error) {
       console.error('Error fetching income:', error);
@@ -144,7 +144,6 @@ export default function Income() {
 
     try {
       if (editingId) {
-        // Update income - use the correct endpoint
         await api.updateIncome(editingId, {
           amount: parseFloat(newIncome.amount),
           source: newIncome.source,
@@ -153,18 +152,22 @@ export default function Income() {
         });
         alert('✅ Income updated successfully!');
       } else {
-        // Add income - use the correct endpoint with income_date
         await api.addIncome({
           amount: parseFloat(newIncome.amount),
           source: newIncome.source,
           description: newIncome.description,
-          income_date: newIncome.income_date  // ✅ FIXED: Using income_date
+          income_date: newIncome.income_date
         });
         alert('✅ Income added successfully!');
       }
 
       resetForm();
       await fetchIncome();
+      
+      // ✅ Refresh dashboard data
+      if (onDataChange) {
+        onDataChange();
+      }
     } catch (error) {
       console.error('Error saving income:', error);
       alert('Failed to save income: ' + error.message);
@@ -176,8 +179,13 @@ export default function Income() {
     if (!userConfirmed) return;
     
     try {
-      await api.deleteIncome(id); // Use deleteIncome, not deleteTransaction
+      await api.deleteIncome(id);
       await fetchIncome();
+      
+      // ✅ Refresh dashboard data
+      if (onDataChange) {
+        onDataChange();
+      }
     } catch (error) {
       console.error('Error deleting:', error);
       alert('Failed to delete: ' + error.message);
@@ -341,7 +349,7 @@ export default function Income() {
         callbacks: {
           label: function(context) {
             const total = context.dataset.data.reduce((a, b) => a + b, 0);
-            const percentage = ((context.raw / total) * 100).toFixed(1);
+            const percentage = total > 0 ? ((context.raw / total) * 100).toFixed(1) : 0;
             return `${user?.currency || 'KES'} ${context.raw.toFixed(2)} (${percentage}%)`;
           }
         }

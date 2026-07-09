@@ -1,9 +1,10 @@
+// frontend/src/pages/Expenses.jsx
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import "./Expenses.css";
 
-export default function Expenses() {
+export default function Expenses({ onDataChange }) { // ✅ ADDED onDataChange prop
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [transactions, setTransactions] = useState([]);
@@ -109,6 +110,11 @@ export default function Expenses() {
 
       resetForm();
       await fetchExpenses();
+      
+      // ✅ Refresh dashboard data
+      if (onDataChange) {
+        onDataChange();
+      }
     } catch (error) {
       console.error('Error saving expense:', error);
       alert('Failed to save expense: ' + error.message);
@@ -119,6 +125,11 @@ export default function Expenses() {
     try {
       await api.categorizeTransaction(transactionId, category);
       await fetchExpenses();
+      
+      // ✅ Refresh dashboard data
+      if (onDataChange) {
+        onDataChange();
+      }
     } catch (error) {
       console.error('Error categorizing:', error);
       alert('Failed to categorize: ' + error.message);
@@ -132,6 +143,11 @@ export default function Expenses() {
     try {
       await api.deleteTransaction(id);
       await fetchExpenses();
+      
+      // ✅ Refresh dashboard data
+      if (onDataChange) {
+        onDataChange();
+      }
     } catch (error) {
       console.error('Error deleting:', error);
       alert('Failed to delete: ' + error.message);

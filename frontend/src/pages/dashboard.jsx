@@ -1,3 +1,4 @@
+// frontend/src/pages/Dashboard.jsx
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
@@ -9,7 +10,6 @@ import DashboardTour from "../components/Dashboardtour";
 import Profile from "./Profile";
 import "./Dashboard.css";
 
-
 export default function Dashboard() {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState("home");
@@ -18,13 +18,10 @@ export default function Dashboard() {
   const [income, setIncome] = useState([]);
   const [loading, setLoading] = useState(true);
   const [tourComplete, setTourComplete] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(false); // 👈 ADD THIS
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  useEffect(() => {
-    fetchDashboardData();
-  }, []);
-
-  async function fetchDashboardData() {
+  // ✅ FETCH DATA FUNCTION
+  const fetchDashboardData = async () => {
     try {
       const userData = await api.getCurrentUser();
       setUser(userData);
@@ -40,12 +37,20 @@ export default function Dashboard() {
     } finally {
       setLoading(false);
     }
-  }
+  };
+
+  // ✅ REFRESH FUNCTION - call this after adding/deleting
+  const refreshData = () => {
+    fetchDashboardData();
+  };
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
 
   async function handleSignOut() {
     try {
       await api.logout();
-      navigate("/");
     } catch (error) {
       // console.error('Error signing out:', error);
     } finally {
@@ -64,14 +69,12 @@ export default function Dashboard() {
     setTourComplete(true);
   };
 
-  // 👇 ADD THESE FUNCTIONS
   function toggleSidebar() {
     setSidebarOpen(!sidebarOpen);
   }
 
   function handleNavClick(page) {
     setCurrentPage(page);
-    // Close sidebar on mobile after navigation
     if (window.innerWidth <= 768) {
       setSidebarOpen(false);
     }
@@ -82,9 +85,9 @@ export default function Dashboard() {
       case 'home':
         return <Home />;
       case 'expenses':
-        return <Expenses />;
+        return <Expenses onDataChange={refreshData} />; // ✅ PASS REFRESH
       case 'income':
-        return <Income />;
+        return <Income onDataChange={refreshData} />; // ✅ PASS REFRESH
       case 'categories':
         return <Categories />;
       case 'profile':
@@ -108,18 +111,18 @@ export default function Dashboard() {
       {/* Tour */}
       <DashboardTour onComplete={handleTourComplete} />
 
-      {/* 👇 ADD MOBILE TOGGLE BUTTON */}
+      {/* Mobile toggle button */}
       <button className="mobile-toggle" onClick={toggleSidebar}>
         ☰
       </button>
 
-      {/* 👇 ADD SIDEBAR OVERLAY */}
+      {/* Sidebar overlay */}
       <div 
         className={`sidebar-overlay ${sidebarOpen ? 'active' : ''}`} 
         onClick={() => setSidebarOpen(false)}
       />
 
-      {/* Sidebar with open class */}
+      {/* Sidebar */}
       <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
         <div className="sidebar-brand">
           <span className="brand-icon">⚓</span>
@@ -202,7 +205,9 @@ export default function Dashboard() {
                   <span className="stat-icon">📈</span>
                   <span className="stat-label">Income</span>
                 </div>
-                <p className="stat-value income-text">{user?.currency || 'KES'} {totalIncome.toLocaleString()}</p>
+                <p className="stat-value income-text">
+                  {user?.currency || 'KES'} {totalIncome.toLocaleString()}
+                </p>
               </div>
 
               <div className="stat-card expense">
@@ -210,7 +215,9 @@ export default function Dashboard() {
                   <span className="stat-icon">📉</span>
                   <span className="stat-label">Expenses</span>
                 </div>
-                <p className="stat-value expense-text">{user?.currency || 'KES'} {totalExpenses.toLocaleString()}</p>
+                <p className="stat-value expense-text">
+                  {user?.currency || 'KES'} {totalExpenses.toLocaleString()}
+                </p>
               </div>
             </div>
 
@@ -227,7 +234,9 @@ export default function Dashboard() {
                     <div key={expense.id} className="ledger-item">
                       <div>
                         <p className="ledger-category">{expense.category || 'Uncategorized'}</p>
-                        <p className="ledger-date">{expense.expense_date || new Date(expense.created_at).toLocaleDateString()}</p>
+                        <p className="ledger-date">
+                          {expense.expense_date || new Date(expense.created_at).toLocaleDateString()}
+                        </p>
                       </div>
                       <p className="ledger-amount expense-text">
                         -{user?.currency || 'KES'} {parseFloat(expense.amount).toLocaleString()}
@@ -250,8 +259,12 @@ export default function Dashboard() {
                   income.map((item) => (
                     <div key={item.id} className="ledger-item">
                       <div>
-                        <p className="ledger-category">{item.description || 'Income'}</p>
-                        <p className="ledger-date">{new Date(item.created_at).toLocaleDateString()}</p>
+                        <p className="ledger-category">
+                          {item.source || item.description || 'Income'}
+                        </p>
+                        <p className="ledger-date">
+                          {item.income_date || new Date(item.created_at).toLocaleDateString()}
+                        </p>
                       </div>
                       <p className="ledger-amount income-text">
                         +{user?.currency || 'KES'} {parseFloat(item.amount).toLocaleString()}
