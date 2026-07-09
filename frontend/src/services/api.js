@@ -193,7 +193,7 @@ const api = {
 },
 
 addIncome(data) {
-    return this.request('/transactions/income', {
+    return this.request('/income', {
         method: 'POST',
         body: JSON.stringify(data)
     });
@@ -286,6 +286,12 @@ getMonthlySummary(month) {
     deleteTransactionAdmin(sourceTable, id) {
         return this.request(`/admin/transactions/${sourceTable}/${id}`, {
             method: 'DELETE'
+        });
+    },
+    // ============ ADMIN: VERIFY USER ============
+    verifyUserById(id) {
+        return this.request(`/auth/admin/verify-user/${id}`, {
+            method: 'PUT'
         });
     }
 };

@@ -1,3 +1,4 @@
+// frontend/src/pages/Income.jsx
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
@@ -49,7 +50,7 @@ export default function Income() {
     amount: '',
     source: '',
     description: '',
-    transaction_date: new Date().toISOString().split('T')[0],
+    income_date: new Date().toISOString().split('T')[0], // Changed from transaction_date
     is_recurring: false
   });
 
@@ -74,7 +75,7 @@ export default function Income() {
 
   async function fetchIncome() {
     try {
-      const incomeData = await api.getIncome();
+      const incomeData = await api.getIncome(); // This should use the correct endpoint
       setTransactions(incomeData);
     } catch (error) {
       console.error('Error fetching income:', error);
@@ -96,7 +97,7 @@ export default function Income() {
         amount: '',
         source: '',
         description: '',
-        transaction_date: new Date().toISOString().split('T')[0],
+        income_date: new Date().toISOString().split('T')[0],
         is_recurring: false
       });
       setEditingId(null);
@@ -109,7 +110,7 @@ export default function Income() {
       amount: '',
       source: '',
       description: '',
-      transaction_date: new Date().toISOString().split('T')[0],
+      income_date: new Date().toISOString().split('T')[0],
       is_recurring: false
     });
     setEditingId(null);
@@ -120,9 +121,9 @@ export default function Income() {
     setEditingId(transaction.id);
     setNewIncome({
       amount: transaction.amount,
-      source: transaction.description || '',
+      source: transaction.source || transaction.description || '',
       description: transaction.description || '',
-      transaction_date: transaction.created_at ? new Date(transaction.created_at).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+      income_date: transaction.income_date || (transaction.created_at ? new Date(transaction.created_at).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]),
       is_recurring: false
     });
     setShowAddForm(true);
@@ -143,17 +144,21 @@ export default function Income() {
 
     try {
       if (editingId) {
-        await api.updateTransaction(editingId, {
+        // Update income - use the correct endpoint
+        await api.updateIncome(editingId, {
           amount: parseFloat(newIncome.amount),
-          description: newIncome.source,
-          type: 'income'
+          source: newIncome.source,
+          description: newIncome.description,
+          income_date: newIncome.income_date
         });
         alert('✅ Income updated successfully!');
       } else {
+        // Add income - use the correct endpoint with income_date
         await api.addIncome({
           amount: parseFloat(newIncome.amount),
-          description: newIncome.source,
-          transaction_date: newIncome.transaction_date
+          source: newIncome.source,
+          description: newIncome.description,
+          income_date: newIncome.income_date  // ✅ FIXED: Using income_date
         });
         alert('✅ Income added successfully!');
       }
@@ -171,7 +176,7 @@ export default function Income() {
     if (!userConfirmed) return;
     
     try {
-      await api.deleteTransaction(id);
+      await api.deleteIncome(id); // Use deleteIncome, not deleteTransaction
       await fetchIncome();
     } catch (error) {
       console.error('Error deleting:', error);
@@ -195,7 +200,7 @@ export default function Income() {
 
   // Group income by source for pie chart
   const sourceData = transactions.reduce((acc, t) => {
-    const source = t.description || 'Other';
+    const source = t.source || t.description || 'Other';
     acc[source] = (acc[source] || 0) + parseFloat(t.amount);
     return acc;
   }, {});
@@ -204,11 +209,12 @@ export default function Income() {
   const sourceValues = Object.values(sourceData);
   const sourceColors = ['#2a6a4a', '#3a8a6a', '#4aaa8a', '#5aca9a', '#6adaaa', '#7aeaba', '#8afaca'];
 
-  // Monthly trend data - FIXED
+  // Monthly trend data
   const getMonthlyData = () => {
     const monthMap = {};
     transactions.forEach(t => {
-      const month = new Date(t.created_at).toLocaleString('default', { month: 'short' });
+      const date = t.income_date || t.created_at;
+      const month = new Date(date).toLocaleString('default', { month: 'short' });
       monthMap[month] = (monthMap[month] || 0) + parseFloat(t.amount);
     });
     return monthMap;
@@ -445,8 +451,8 @@ export default function Income() {
                 <label>Date</label>
                 <input
                   type="date"
-                  value={newIncome.transaction_date}
-                  onChange={(e) => setNewIncome({ ...newIncome, transaction_date: e.target.value })}
+                  value={newIncome.income_date}
+                  onChange={(e) => setNewIncome({ ...newIncome, income_date: e.target.value })}
                 />
               </div>
             </div>
@@ -543,10 +549,10 @@ export default function Income() {
                   +{user?.currency || 'KES'} {parseFloat(transaction.amount).toFixed(2)}
                 </span>
                 <span className="income-source">
-                  {getSourceIcon(transaction.description || 'Other')} {transaction.description || 'Other'}
+                  {getSourceIcon(transaction.source || transaction.description || 'Other')} {transaction.source || transaction.description || 'Other'}
                 </span>
                 <span className="income-date">
-                  {new Date(transaction.created_at).toLocaleDateString()}
+                  {new Date(transaction.income_date || transaction.created_at).toLocaleDateString()}
                 </span>
               </div>
               

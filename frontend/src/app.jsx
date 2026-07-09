@@ -1,12 +1,14 @@
-// frontend/src/App.jsx
+// frontend/src/app.jsx
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import Landing from './pages/Landing';  // Make sure file is Landing.jsx
-import Auth from './pages/Auth';        // Make sure file is Auth.jsx
+import Landing from './pages/Landing';
+import Auth from './pages/Auth';
 import Dashboard from './pages/Dashboard';
 import AdminDashboard from './pages/AdminDashboard';
-import Verify from './pages/Verify'; // <-- CHANGE: lowercase 'v' if file is verify.jsx
+import AdminUsers from './pages/AdminUsers';
+import AdminTransactions from './pages/AdminTransactions';
+import Verify from './pages/Verify';
 import ProtectedRoute from './components/ProtectedRoute';
-import './app.css'; 
+import './app.css';
 
 function App() {
   return (
@@ -24,10 +26,22 @@ function App() {
           </ProtectedRoute>
         } />
         
-        {/* NEW: Admin route - protected with admin check */}
+        {/* Admin routes */}
         <Route path="/admin" element={
           <ProtectedRoute adminOnly={true}>
             <AdminDashboard />
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/admin/users" element={
+          <ProtectedRoute adminOnly={true}>
+            <AdminUsers />
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/admin/transactions" element={
+          <ProtectedRoute adminOnly={true}>
+            <AdminTransactions />
           </ProtectedRoute>
         } />
         
